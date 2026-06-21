@@ -47,7 +47,8 @@ img{display:block;max-width:100%;height:auto}
 .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 0;transition:all .5s var(--ease)}
 .nav.scrolled{background:rgba(250,248,245,.88);backdrop-filter:blur(24px) saturate(1.6);border-bottom:1px solid var(--border);padding:14px 0;box-shadow:var(--shadow-sm)}
 .nav-inner{max-width:1140px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{height:34px;width:auto;transition:opacity .3s}
+.nav-logo{height:34px;width:auto;transition:opacity .3s,filter .5s var(--ease)}
+.nav.scrolled .nav-logo{filter:brightness(0)}
 .nav-cta{font-family:var(--font-body);font-size:13px;font-weight:600;padding:10px 24px;border-radius:100px;background:var(--gold);color:var(--white);transition:all .35s var(--ease);letter-spacing:.4px;text-transform:uppercase;border:none;cursor:pointer}
 .nav-cta:hover{background:var(--gold-light);transform:translateY(-1px);box-shadow:var(--shadow-gold)}
 
@@ -166,6 +167,13 @@ img{display:block;max-width:100%;height:auto}
 .team-member-role{font-size:11px;color:var(--text-light);margin-top:1px}
 .team-more{display:flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:var(--surface);border:1px dashed var(--border);margin:0 auto 10px;font-size:13px;font-weight:600;color:var(--text-light)}
 
+/* --- Office Highlights (team section replacement) --- */
+.office-highlights{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+.office-highlight-item{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);transition:all .35s var(--ease)}
+.office-highlight-item:hover{border-color:var(--border-warm);background:var(--gold-bg);transform:translateY(-1px)}
+.office-highlight-item svg{width:20px;height:20px;min-width:20px;color:var(--gold)}
+.office-highlight-item span{font-size:13px;font-weight:500;color:var(--text-mid);line-height:1.4}
+
 /* --- CTA Section --- */
 .cta-section{background:var(--cream);padding:80px 0 120px}
 .cta-card{text-align:center;padding:72px 48px;border-radius:var(--radius-xl);background:var(--navy);position:relative;overflow:hidden}
@@ -271,5 +279,6 @@ img{display:block;max-width:100%;height:auto}
   .quality-item{gap:18px;padding:22px 0}
   .qualities-timeline::before{left:26px}
   .team-members{flex-wrap:wrap;justify-content:center}
+  .office-highlights{grid-template-columns:1fr}
   .container{padding:0 20px}
 }
