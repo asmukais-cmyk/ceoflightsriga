@@ -1,0 +1,9 @@
+{
+  "name": "ceoflightsriga-landing",
+  "version": "1.0.0",
+  "description": "CEOFLIGHTS Riga recruitment landing page",
+  "scripts": {
+    "dev": "npx serve public -l 3000",
+    "build": "echo 'Static site — no build needed'"
+  }
+}
