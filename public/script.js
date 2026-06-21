@@ -1,29 +1,52 @@
-// Nav scroll effect
-const nav = document.querySelector('.nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 40);
-});
+/* CEOFLIGHTS Riga — Landing Page Interactivity */
 
-// Scroll-reveal animation
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
+// Nav scroll effect
+const nav = document.getElementById('nav');
+let lastY = 0;
+
+function onScroll() {
+  const y = window.scrollY;
+  nav.classList.toggle('scrolled', y > 60);
+  lastY = y;
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+// Scroll-reveal observer
+const reveals = document.querySelectorAll('.role-card, .benefit-item, .req-item, .gallery-item, .cta-card, .teach-banner');
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
     if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      observer.unobserve(entry.target);
+      // Stagger children by index
+      const siblings = Array.from(entry.target.parentElement.children).filter(el =>
+        el.classList.contains('role-card') ||
+        el.classList.contains('benefit-item') ||
+        el.classList.contains('req-item') ||
+        el.classList.contains('gallery-item')
+      );
+      const idx = siblings.indexOf(entry.target);
+      const delay = Math.max(0, idx) * 80;
+
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, delay);
+      revealObs.unobserve(entry.target);
     }
   });
-}, { threshold: 0.15 });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
-document.querySelectorAll('.role-card, .benefit-card, .req-item, .teach-banner, .cta-card').forEach(el => {
-  el.classList.add('fade-in');
-  observer.observe(el);
+reveals.forEach(el => {
+  el.classList.add('reveal');
+  revealObs.observe(el);
 });
 
 // Smooth scroll for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-  link.addEventListener('click', e => {
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
     e.preventDefault();
-    const target = document.querySelector(link.getAttribute('href'));
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   });
 });
