@@ -6,10 +6,14 @@
  * Returns: { redirectUrl } — direct link to the assessment
  *
  * Flow:
- *  1. Authenticate with TestGorilla (login → token)
+ *  1. Authenticate with TestGorilla (login → token, cached 50min)
  *  2. Invite candidate with no_email=true (suppress TG email)
- *  3. Fetch candidature details to get the invitation_link
- *  4. Return the direct assessment URL
+ *  3. Return direct assessment URL from invitation_uuid
+ *
+ * Edge cases:
+ *  - Duplicate invite (REPEATING_INVITATION): looks up existing link
+ *  - Bad email (BAD_EMAIL_IPSCORE): returns user-friendly error
+ *  - Auth token expired: clears cache, next request re-authenticates
  */
 
 const TG_BASE = 'https://app.testgorilla.com';
@@ -101,37 +105,6 @@ async function inviteCandidate(token, { firstName, lastName, email }) {
   return await res.json();
 }
 
-async function getInvitationLink(token, testtakerId) {
-  // Fetch candidature details to get the invitation_link
-  const url = `${TG_BASE}/api/assessments/candidature/?assessment=${ASSESSMENT_ID}&test_taker=${testtakerId}&limit=1`;
-
-  const res = await fetch(url, {
-    headers: {
-      'Authorization': `Token ${token}`,
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch candidature (${res.status})`);
-  }
-
-  const data = await res.json();
-
-  if (data.results && data.results.length > 0) {
-    const candidature = data.results[0];
-    // The invitation_link field contains the direct URL
-    if (candidature.invitation_link) {
-      return candidature.invitation_link;
-    }
-    // Fallback: construct from invitation_uuid
-    if (candidature.invitation_uuid) {
-      return `${TG_BASE}/testtaker/welcome/${candidature.invitation_uuid}`;
-    }
-  }
-
-  throw new Error('Could not retrieve invitation link from candidature');
-}
 
 async function findExistingCandidate(token, email) {
   // Search for existing candidature by email
@@ -176,6 +149,9 @@ export default async function handler(req, res) {
   }
 
   try {
+    if (!req.body) {
+      return res.status(400).json({ error: 'Request body is required' });
+    }
     const { firstName, lastName, email } = req.body;
 
     // Validation

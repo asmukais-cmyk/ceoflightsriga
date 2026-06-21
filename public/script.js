@@ -114,9 +114,8 @@ if (applyForm) {
   const lastNameInput = document.getElementById('apply-last-name');
   const emailInput = document.getElementById('apply-email');
   const submitBtn = document.getElementById('cta-apply-btn');
-  const submitText = submitBtn.querySelector('.apply-submit-text');
-  const submitLoading = submitBtn.querySelector('.apply-submit-loading');
   const messageEl = document.getElementById('apply-message');
+  let isSubmitting = false;
 
   // Clear field errors on input
   [firstNameInput, lastNameInput, emailInput].forEach(input => {
@@ -135,9 +134,13 @@ if (applyForm) {
   }
 
   function setLoading(on) {
+    isSubmitting = on;
     submitBtn.disabled = on;
-    submitText.hidden = on;
-    submitLoading.hidden = !on;
+    if (on) {
+      submitBtn.classList.add('is-loading');
+    } else {
+      submitBtn.classList.remove('is-loading');
+    }
   }
 
   function showMessage(msg, type) {
@@ -148,6 +151,9 @@ if (applyForm) {
 
   applyForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    // Prevent double-submit
+    if (isSubmitting) return;
 
     // Reset
     messageEl.hidden = true;
@@ -165,22 +171,25 @@ if (applyForm) {
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError(emailInput, 'Please enter a valid email'); valid = false; }
 
     if (!valid) {
-      // Focus first error field
       const firstErr = applyForm.querySelector('.input-error');
       if (firstErr) firstErr.focus();
       return;
     }
 
-    // Submit
+    // Submit with timeout
     setLoading(true);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
 
     try {
       const res = await fetch('/api/invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ firstName, lastName, email }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeout);
       const data = await res.json();
 
       if (!res.ok) {
@@ -188,8 +197,8 @@ if (applyForm) {
       }
 
       if (data.redirectUrl) {
+        setLoading(false);
         showMessage('Success! Redirecting you to the assessment…', 'success');
-        // Brief delay so they see the success message
         setTimeout(() => {
           window.location.href = data.redirectUrl;
         }, 1200);
@@ -197,9 +206,13 @@ if (applyForm) {
         throw new Error('No redirect URL received');
       }
     } catch (err) {
+      clearTimeout(timeout);
       setLoading(false);
-      showMessage(err.message || 'Something went wrong. Please try again.', 'error');
+      if (err.name === 'AbortError') {
+        showMessage('Request timed out. Please check your connection and try again.', 'error');
+      } else {
+        showMessage(err.message || 'Something went wrong. Please try again.', 'error');
+      }
     }
   });
 }
-
