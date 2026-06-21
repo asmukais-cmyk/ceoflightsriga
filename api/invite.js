@@ -74,6 +74,22 @@ async function inviteCandidate(token, { firstName, lastName, email }) {
       return { duplicate: true, raw: text };
     }
 
+    // Handle TestGorilla email validation errors
+    if (res.status === 400) {
+      try {
+        const errData = JSON.parse(text);
+        if (errData.errors) {
+          const emailErr = errData.errors.find(e => e.field === 'email');
+          if (emailErr) {
+            if (emailErr.error_key === 'BAD_EMAIL_IPSCORE' || emailErr.error_key === 'BAD_EMAIL') {
+              return { validationError: 'This email address could not be verified. Please use a different email (e.g. Gmail, Outlook).' };
+            }
+            return { validationError: `Email error: ${emailErr.error_key}` };
+          }
+        }
+      } catch (_) { /* not JSON, fall through */ }
+    }
+
     throw new Error(`Invite failed (${res.status}): ${text}`);
   }
 
@@ -180,6 +196,10 @@ export default async function handler(req, res) {
 
     let redirectUrl;
 
+    if (inviteResult.validationError) {
+      return res.status(400).json({ error: inviteResult.validationError });
+    }
+
     if (inviteResult.duplicate) {
       // Candidate already exists — find their existing link
       redirectUrl = await findExistingCandidate(token, email.trim().toLowerCase());
@@ -189,18 +209,11 @@ export default async function handler(req, res) {
         });
       }
     } else {
-      // Step 3: Get the personalized assessment link
-      const testtakerId = inviteResult.testtaker_id;
-
-      if (!testtakerId) {
-        // Try using invitation_uuid directly
-        if (inviteResult.invitation_uuid) {
-          redirectUrl = `${TG_BASE}/testtaker/welcome/${inviteResult.invitation_uuid}`;
-        } else {
-          throw new Error('No testtaker_id or invitation_uuid in invite response');
-        }
+      // Use invitation_uuid directly from invite response (no extra API call needed)
+      if (inviteResult.invitation_uuid) {
+        redirectUrl = `${TG_BASE}/testtaker/welcome/${inviteResult.invitation_uuid}`;
       } else {
-        redirectUrl = await getInvitationLink(token, testtakerId);
+        throw new Error('No invitation_uuid in invite response');
       }
     }
 
