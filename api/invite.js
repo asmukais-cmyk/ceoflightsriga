@@ -74,17 +74,22 @@ async function inviteCandidate(token, { firstName, lastName, email }) {
       return { duplicate: true, raw: text };
     }
 
-    // Handle TestGorilla email validation errors
+    // Handle TestGorilla-specific 400 errors
     if (res.status === 400) {
       try {
         const errData = JSON.parse(text);
         if (errData.errors) {
           const emailErr = errData.errors.find(e => e.field === 'email');
           if (emailErr) {
+            // Duplicate invite — treat like "already invited"
+            if (emailErr.error_key === 'REPEATING_INVITATION') {
+              return { duplicate: true, raw: text };
+            }
+            // Bad email quality score — user-facing error
             if (emailErr.error_key === 'BAD_EMAIL_IPSCORE' || emailErr.error_key === 'BAD_EMAIL') {
               return { validationError: 'This email address could not be verified. Please use a different email (e.g. Gmail, Outlook).' };
             }
-            return { validationError: `Email error: ${emailErr.error_key}` };
+            return { validationError: `Email validation failed. Please try a different email address.` };
           }
         }
       } catch (_) { /* not JSON, fall through */ }
