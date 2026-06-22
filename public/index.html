@@ -10,7 +10,7 @@
   <!-- Open Graph -->
   <meta property="og:title" content="Join CEOFLIGHTS Riga — We're Hiring!">
   <meta property="og:description" content="Become an Airline Ticket Sales Agent. Sell premium flights to U.S. clients from our Riga office. No experience needed — we train you.">
-  <meta property="og:image" content="https://ceoflightsriga.lv/images/hero.jpg">
+  <meta property="og:image" content="https://ceoflightsriga.lv/images/hero-desktop.jpg">
   <meta property="og:url" content="https://ceoflightsriga.lv">
   <meta property="og:type" content="website">
 
@@ -23,6 +23,9 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+  <!-- Skip to main content (a11y) -->
+  <a href="#role" class="skip-link" id="skip-link">Skip to content</a>
 
   <!-- Navigation -->
   <nav class="nav" id="nav">
@@ -321,8 +324,8 @@
   <section class="section team-section" id="team">
     <div class="container">
       <div class="team-layout">
-        <div class="photo-slider" id="office-slider">
-          <div class="photo-slider-track">
+        <div class="photo-slider" id="office-slider" role="region" aria-label="Office photo gallery" aria-roledescription="carousel">
+          <div class="photo-slider-track" aria-live="polite">
             <!-- Slide 1: Office Panorama -->
             <div class="photo-slider-slide">
               <picture>

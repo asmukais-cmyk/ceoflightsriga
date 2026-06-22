@@ -115,6 +115,8 @@ if (slider) {
   
   function updateSlider() {
     track.style.transform = `translateX(-${currentIndex * 100}%)`;
+    // Update ARIA live region for screen reader announcement
+    track.setAttribute('aria-label', `Slide ${currentIndex + 1} of ${slideCount}`);
     dots.forEach((dot, idx) => {
       dot.classList.toggle('active', idx === currentIndex);
       dot.setAttribute('aria-current', idx === currentIndex ? 'true' : 'false');

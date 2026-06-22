@@ -169,7 +169,7 @@ export default async function handler(req, res) {
     // Step 1: Authenticate
     const token = await getToken();
 
-    // Step 2: Invite the candidate (suppress email)
+    // Step 2: Invite the candidate
     const inviteResult = await inviteCandidate(token, {
       firstName: firstName.trim(),
       lastName: lastName.trim(),
