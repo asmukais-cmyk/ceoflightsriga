@@ -58,6 +58,8 @@ img{display:block;max-width:100%;height:auto}
 .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 0;transition:all .5s var(--ease)}
 .nav.scrolled{background:rgba(250,248,245,.92);backdrop-filter:blur(24px) saturate(1.6);border-bottom:1px solid var(--border);padding:14px 0;box-shadow:var(--shadow-sm)}
 .nav-inner{max-width:1140px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo-link{display:inline-flex;text-decoration:none;line-height:0}
+.nav-logo-link:hover .nav-logo{opacity:.8}
 .nav-logo{height:34px;width:auto;transition:opacity .3s,filter .5s var(--ease)}
 .nav.scrolled .nav-logo{filter:brightness(0)}
 .nav-links{display:flex;align-items:center;gap:8px}
