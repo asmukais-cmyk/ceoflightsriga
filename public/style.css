@@ -13,6 +13,7 @@
   --gold-light:  #d4a45a;
   --gold-bg:     rgba(201,145,62,.07);
   --gold-border: rgba(201,145,62,.18);
+  --lime:        #C5F82A;
   --red:         #e63329;
   --red-light:   #ef4444;
   --red-bg:      rgba(230,51,41,.06);
@@ -81,17 +82,16 @@ img{display:block;max-width:100%;height:auto}
   display:inline-block;
   font-family:var(--font-display);font-size:10px;font-weight:700;
   text-transform:uppercase;letter-spacing:3px;
-  color:var(--white);
-  background:var(--red);
+  color:var(--navy);
+  background:var(--lime);
   padding:5px 14px 4px;
   border-radius:2px;
   margin-bottom:28px;
-  transform:rotate(-1deg);
-  box-shadow:0 2px 12px rgba(230,51,41,.35)
+  box-shadow:0 2px 12px rgba(197,248,42,.25)
 }
 
 .hero h1{font-family:var(--font-display);font-size:clamp(2.8rem,6.5vw,5.2rem);font-weight:800;line-height:1.12;letter-spacing:-.025em;margin-bottom:22px;color:var(--white)}
-.hero h1 .accent{color:var(--gold)}
+.hero h1 .accent{color:var(--lime)}
 
 .hero-sub{font-size:clamp(1rem,2vw,1.2rem);color:rgba(255,255,255,.7);line-height:1.75;max-width:560px;margin:0 auto 40px}
 .hero-sub strong{color:rgba(255,255,255,.95)}
