@@ -113,6 +113,12 @@ if (slider) {
   
   const dots = Array.from(dotsContainer.querySelectorAll('.slider-dot'));
   
+  // Mobile: add numeric counter (hidden on desktop via CSS)
+  const counterEl = document.createElement('span');
+  counterEl.className = 'slider-counter';
+  counterEl.textContent = `1 / ${slideCount}`;
+  dotsContainer.appendChild(counterEl);
+  
   function updateSlider() {
     track.style.transform = `translateX(-${currentIndex * 100}%)`;
     // Update ARIA live region for screen reader announcement
@@ -121,6 +127,8 @@ if (slider) {
       dot.classList.toggle('active', idx === currentIndex);
       dot.setAttribute('aria-current', idx === currentIndex ? 'true' : 'false');
     });
+    // Update mobile counter
+    counterEl.textContent = `${currentIndex + 1} / ${slideCount}`;
   }
   
   function goToSlide(index) {
