@@ -1,156 +1,153 @@
-"""Enhance office photos using Gemini Image Generation API.
-Uses real office photos as reference to create enhanced, web-optimized versions
-with better lighting, composition and a premium feel.
 """
-import io, sys, base64, time
-from pathlib import Path
-from google import genai
-from google.genai import types
-from PIL import Image as PILImage
-from dotenv import load_dotenv
+Professional office photo enhancement pipeline.
+Enhances brightness, contrast, color balance, and sharpness to look
+like a professional photographer's output.
+"""
+
+from PIL import Image, ImageEnhance, ImageFilter
 import os
 
-if sys.platform == "win32":
-    sys.stdout.reconfigure(encoding="utf-8")
-    sys.stderr.reconfigure(encoding="utf-8")
+INPUT_DIR = r"c:\ANTIGRAVITY\CEOFLIGHTS Riga\Office"
+OUTPUT_DIR = r"c:\ANTIGRAVITY\CEOFLIGHTS Riga\public\images"
 
-load_dotenv()
-API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyDedI69B67bLiEK_UHIHRt-CZbew9Vyyp8")
-OFFICE_DIR = Path(r"C:\ANTIGRAVITY\CF Riga Video\Office")
-OUT = Path(__file__).parent / "public" / "images"
-OUT.mkdir(parents=True, exist_ok=True)
+# Best office photos selected for carousel
+PHOTOS = {
+    # filename: (output_basename, target_width, target_height, crop_box_or_none)
+    "Office2.jpeg": {
+        "out": "office-wide",
+        "w": 1600, "h": 900,
+        "crop": None,  # Full panoramic
+        "brightness": 1.12,
+        "contrast": 1.08,
+        "color": 1.10,
+        "sharpness": 1.15,
+    },
+    "Office5.JPEG": {
+        "out": "office-lounge",
+        "w": 1600, "h": 900,
+        "crop": None,  # Beautiful lounge angle
+        "brightness": 1.10,
+        "contrast": 1.06,
+        "color": 1.12,
+        "sharpness": 1.12,
+    },
+    "Office6.JPEG": {
+        "out": "office-floor",
+        "w": 1600, "h": 900,
+        "crop": None,  # Elevated view of stations
+        "brightness": 1.08,
+        "contrast": 1.05,
+        "color": 1.08,
+        "sharpness": 1.15,
+    },
+    "Office9.JPEG": {
+        "out": "world-clocks",
+        "w": 1600, "h": 900,
+        "crop": None,  # Clean clocks shot
+        "brightness": 1.08,
+        "contrast": 1.06,
+        "color": 1.05,
+        "sharpness": 1.10,
+    },
+    "Office3.jpeg": {
+        "out": "office-workstations",
+        "w": 1600, "h": 900,
+        "crop": None,  # Close-up of calling stations
+        "brightness": 1.10,
+        "contrast": 1.08,
+        "color": 1.08,
+        "sharpness": 1.18,
+    },
+    "Office1.jpeg": {
+        "out": "office-detail",
+        "w": 1600, "h": 900,
+        "crop": None,  # Glass wall + clocks detail
+        "brightness": 1.10,
+        "contrast": 1.06,
+        "color": 1.08,
+        "sharpness": 1.12,
+    },
+}
 
-client = genai.Client(api_key=API_KEY)
 
-def load_ref(filepath, max_dim=1024):
-    img = PILImage.open(filepath)
-    # Auto-rotate based on EXIF
-    from PIL import ImageOps
-    img = ImageOps.exif_transpose(img)
-    if img.mode == "RGBA":
-        img = img.convert("RGB")
-    if max(img.size) > max_dim:
-        img.thumbnail((max_dim, max_dim), PILImage.LANCZOS)
+def center_crop(img, target_w, target_h):
+    """Crop image to target aspect ratio from center."""
+    img_w, img_h = img.size
+    target_ratio = target_w / target_h
+    img_ratio = img_w / img_h
+
+    if img_ratio > target_ratio:
+        # Wider than target - crop width
+        new_w = int(img_h * target_ratio)
+        left = (img_w - new_w) // 2
+        return img.crop((left, 0, left + new_w, img_h))
+    else:
+        # Taller than target - crop height
+        new_h = int(img_w / target_ratio)
+        top = (img_h - new_h) // 2
+        return img.crop((0, top, img_w, top + new_h))
+
+
+def enhance_photo(img, settings):
+    """Apply professional-grade photo enhancement."""
+    # Brightness
+    img = ImageEnhance.Brightness(img).enhance(settings["brightness"])
+    # Contrast
+    img = ImageEnhance.Contrast(img).enhance(settings["contrast"])
+    # Color saturation
+    img = ImageEnhance.Color(img).enhance(settings["color"])
+    # Sharpness
+    img = ImageEnhance.Sharpness(img).enhance(settings["sharpness"])
     return img
 
-def enhance_image(name, prompt, ref_images, width, height, aspect="16:9"):
-    print(f"\n  Enhancing {name}...")
-    contents = [prompt]
-    for rp in ref_images:
-        print(f"    + ref: {rp.name}")
-        contents.append(load_ref(rp))
 
-    for attempt in range(3):
-        try:
-            print(f"    Attempt {attempt+1}/3...")
-            response = client.models.generate_content(
-                model="gemini-3.1-flash-image-preview",
-                contents=contents,
-                config=types.GenerateContentConfig(
-                    response_modalities=["IMAGE"],
-                    image_config=types.ImageConfig(
-                        aspect_ratio=aspect,
-                        image_size="2K",
-                    ),
-                ),
-            )
-            for part in response.parts:
-                if part.inline_data is not None:
-                    raw = part.inline_data.data
-                    if isinstance(raw, str):
-                        raw = base64.b64decode(raw)
-                    img = PILImage.open(io.BytesIO(raw))
-                    print(f"    Raw: {img.size[0]}x{img.size[1]}")
-                    
-                    # Resize to target
-                    img = img.resize((width, height), PILImage.LANCZOS)
-                    
-                    # Save as WebP + JPEG
-                    webp_out = OUT / f"{name}.webp"
-                    jpg_out = OUT / f"{name}.jpg"
-                    img.save(str(webp_out), "WEBP", quality=85)
-                    img.save(str(jpg_out), "JPEG", quality=88)
-                    
-                    wkb = webp_out.stat().st_size / 1024
-                    jkb = jpg_out.stat().st_size / 1024
-                    print(f"    ✅ WebP: {wkb:.0f}KB  |  JPEG: {jkb:.0f}KB")
-                    return True
-            print("    No image returned")
-        except Exception as e:
-            print(f"    Error: {str(e)[:200]}")
-            if attempt < 2:
-                wait = 8 * (attempt + 1)
-                print(f"    Waiting {wait}s...")
-                time.sleep(wait)
-    return False
+def process_photo(filename, settings):
+    """Full processing pipeline for one photo."""
+    input_path = os.path.join(INPUT_DIR, filename)
+    print(f"Processing {filename}...")
+
+    img = Image.open(input_path)
+    img = img.convert("RGB")
+
+    # Auto-rotate based on EXIF
+    from PIL import ExifTags
+    try:
+        exif = img._getexif()
+        if exif:
+            for tag, value in exif.items():
+                if ExifTags.TAGS.get(tag) == "Orientation":
+                    if value == 3:
+                        img = img.rotate(180, expand=True)
+                    elif value == 6:
+                        img = img.rotate(270, expand=True)
+                    elif value == 8:
+                        img = img.rotate(90, expand=True)
+    except Exception:
+        pass
+
+    # Center crop to 16:9
+    img = center_crop(img, settings["w"], settings["h"])
+
+    # Resize to target dimensions
+    img = img.resize((settings["w"], settings["h"]), Image.LANCZOS)
+
+    # Apply enhancement
+    img = enhance_photo(img, settings)
+
+    # Save as optimized JPG and WebP
+    out_base = settings["out"]
+    jpg_path = os.path.join(OUTPUT_DIR, f"{out_base}.jpg")
+    webp_path = os.path.join(OUTPUT_DIR, f"{out_base}.webp")
+
+    img.save(jpg_path, "JPEG", quality=88, optimize=True)
+    img.save(webp_path, "WEBP", quality=85, method=6)
+
+    jpg_size = os.path.getsize(jpg_path) / 1024
+    webp_size = os.path.getsize(webp_path) / 1024
+    print(f"  -> {out_base}.jpg ({jpg_size:.0f}KB) / .webp ({webp_size:.0f}KB)")
 
 
 if __name__ == "__main__":
-    print("=" * 60)
-    print("  Enhancing office photos for landing page")
-    print("=" * 60)
-
-    # 1. Hero-width office shot — enhance the wide office view
-    enhance_image("office-wide", (
-        "Enhance this real office photo to look like a professional corporate "
-        "photography shoot. Improve the lighting to be warm and inviting with "
-        "natural golden-hour quality. Increase clarity and sharpness. Keep every "
-        "detail authentic — the blue-grey acoustic dividers, wooden desks, monitors, "
-        "glass partitions, world timezone clocks. Make it look like it belongs on "
-        "a Fortune 500 careers page. No text, no overlays, no people. "
-        "Professional real estate photography quality, shot on Sony A7R IV."
-    ), ref_images=[
-        OFFICE_DIR / "Office1.jpeg",
-        OFFICE_DIR / "Office9.JPEG",
-    ], width=1920, height=900, aspect="16:9")
-
-    # 2. Office workstations — cubicle area from above
-    enhance_image("office-workstations", (
-        "Enhance this real office photo to look like premium corporate photography. "
-        "Show the modern workstation cubicles with blue-grey fabric dividers, wooden "
-        "desks, monitors, and ergonomic chairs. Improve lighting — warm, inviting "
-        "ambient light from overhead LED strips. The space should feel professional, "
-        "modern, and ready for work. Keep all authentic details. "
-        "No text, no overlays, no people. Shot on wide angle lens, real estate quality."
-    ), ref_images=[
-        OFFICE_DIR / "Office6.JPEG",
-        OFFICE_DIR / "Office3.jpeg",
-    ], width=1920, height=900, aspect="16:9")
-
-    # 3. Office floor + lounge combined — duo strip images
-    enhance_image("office-floor", (
-        "Enhance this office floor photograph. Show the full modern office space with "
-        "blue acoustic cubicle dividers, wooden desks, monitors, glass partition walls, "
-        "and green plants. Improve lighting to warm, inviting golden tones. Keep "
-        "everything authentic. Professional corporate photography quality. "
-        "No text, no people, no overlays."
-    ), ref_images=[
-        OFFICE_DIR / "Office3.jpeg",
-    ], width=1200, height=800, aspect="3:2")
-
-    enhance_image("office-lounge", (
-        "Enhance this office break room / lounge area photo. Show the red/coral "
-        "comfortable couches, wooden coffee table with flowers, skylights in ceiling. "
-        "Improve lighting to feel warm and cozy. Keep all authentic details. "
-        "The space should feel inviting and comfortable — a place you'd want to take "
-        "a break in. Professional interior photography quality. "
-        "No text, no people, no overlays."
-    ), ref_images=[
-        OFFICE_DIR / "Office5.JPEG",
-    ], width=1200, height=800, aspect="3:2")
-
-    # 4. Team training — enhance the group selfie
-    enhance_image("team-training", (
-        "Enhance this real team group photo to look like professional corporate "
-        "photography. Improve the lighting, reduce noise, increase sharpness and "
-        "clarity. The team is sitting around tables in a training/meeting room. "
-        "Keep every person exactly as they are — do not change faces, expressions, "
-        "or positions. Just improve overall photo quality, color grading, and "
-        "professional appearance. Natural skin tones, warm lighting."
-    ), ref_images=[
-        OFFICE_DIR / "New Trainees.jpeg",
-    ], width=1200, height=800, aspect="3:2")
-
-    print(f"\n{'=' * 60}")
-    print("  Done! Enhanced images saved to public/images/")
-    print(f"{'=' * 60}")
+    for filename, settings in PHOTOS.items():
+        process_photo(filename, settings)
+    print("\nDone! All images enhanced and saved.")

@@ -1,6 +1,7 @@
 """
-Remove cloth hangers from Office/New Trainees.jpeg
+Remove cloth hangers from Office/New Trainees.jpeg — v2
 Model: gemini-3.1-flash-image-preview (image editing)
+Fixes: orientation preservation, face preservation
 """
 
 import os, sys, io, base64
@@ -15,7 +16,6 @@ from datetime import datetime
 load_dotenv(Path(__file__).parent / ".env")
 api_key = os.getenv("GEMINI_API_KEY")
 if not api_key:
-    # Fallback to CF Thumbnails .env
     load_dotenv(Path(r"C:\ANTIGRAVITY\CF Thumbnails\.env"))
     api_key = os.getenv("GEMINI_API_KEY")
 if not api_key:
@@ -29,11 +29,14 @@ source_path = Path(__file__).parent / "Office" / "New Trainees.jpeg"
 print(f"Loading: {source_path}")
 
 source_img = PILImage.open(source_path)
+# Strip EXIF rotation to ensure correct orientation
+from PIL import ImageOps
+source_img = ImageOps.exif_transpose(source_img)
 if source_img.mode == "RGBA":
     source_img = source_img.convert("RGB")
 
 original_size = source_img.size
-print(f"Original size: {original_size[0]}x{original_size[1]}")
+print(f"Original size (after EXIF correction): {original_size[0]}x{original_size[1]}")
 
 # Resize for API (max 1536 for editing)
 max_dim = 1536
@@ -41,14 +44,16 @@ if max(source_img.size) > max_dim:
     source_img.thumbnail((max_dim, max_dim), PILImage.LANCZOS)
     print(f"Resized to: {source_img.size[0]}x{source_img.size[1]}")
 
-# Edit prompt — very specific about what to change and what to keep
-edit_prompt = """Keep this photograph EXACTLY as it is — same people, same poses, same expressions, same lighting, same table, same items on tables, same everything.
+# Edit prompt — extremely specific
+edit_prompt = """This is a LANDSCAPE (horizontal) orientation group selfie photo taken in a training room.
 
-The ONLY change: Remove the chrome/metal clothing rack and white cloth hangers visible on the wall behind the group of people. Replace that area with a plain clean wall that matches the surrounding wall color and texture (light grey/white wall). The wall should look natural and continuous as if the clothing rack was never there.
+CRITICAL: Maintain the EXACT same orientation (landscape/horizontal), the EXACT same perspective, the EXACT same people with their EXACT same faces, expressions, poses, clothing, and positions. Do NOT rotate the image. Do NOT change any person's appearance.
 
-Do NOT change any person, their clothing, their position, or any other element in the image. Only remove the clothing rack and hangers."""
+The ONLY change to make: On the wall behind the group of people, there is a chrome/metal clothing rack/rail with white plastic coat hangers hanging from it. Remove this clothing rack, the metal rail/bar, and ALL the white hangers. Replace that entire area with a plain, clean wall that matches the surrounding light grey wall color and texture, so the wall looks continuous and natural as if the rack was never there.
 
-# Call API
+IMPORTANT: Keep EVERYTHING else pixel-perfect identical — all people, their faces, the desks, items on desks, the door, the floor, the laptop screen, the glass of water, the fire safety sign on the door, the light on the ceiling. ONLY remove the clothing rack and hangers."""
+
+# Call API — use 4:3 to match the landscape orientation
 print("Calling Gemini API for image editing... (30-60 seconds)")
 response = client.models.generate_content(
     model="gemini-3.1-flash-image-preview",
@@ -70,9 +75,6 @@ if response.parts is None:
     if hasattr(response, 'candidates') and response.candidates:
         for c in response.candidates:
             print(f"  Finish reason: {getattr(c, 'finish_reason', 'N/A')}")
-            if hasattr(c, 'safety_ratings') and c.safety_ratings:
-                for sr in c.safety_ratings:
-                    print(f"  Safety: {sr}")
     sys.exit(1)
 
 image_saved = False
@@ -85,18 +87,15 @@ for part in response.parts:
             if isinstance(raw_data, str):
                 raw_data = base64.b64decode(raw_data)
             img = PILImage.open(io.BytesIO(raw_data))
-            # Save as JPEG to match original format
+            # Verify orientation is landscape
+            if img.size[0] < img.size[1]:
+                print(f"WARNING: Output is portrait ({img.size[0]}x{img.size[1]}), rotating...")
+                img = img.rotate(90, expand=True)
             img.save(str(output_path), "JPEG", quality=95)
             image_saved = True
             print(f"Saved: {output_path} ({img.size[0]}x{img.size[1]})")
         except Exception as e:
             print(f"Error processing image: {e}")
-            # Fallback: write raw bytes
-            with open(str(output_path), "wb") as f:
-                d = part.inline_data.data
-                f.write(base64.b64decode(d) if isinstance(d, str) else d)
-            image_saved = True
-            print(f"Saved (raw): {output_path}")
 
 if not image_saved:
     print("No image returned in response")

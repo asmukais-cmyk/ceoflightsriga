@@ -17,6 +17,7 @@
  */
 
 const TG_BASE = 'https://app.testgorilla.com';
+const TG_TESTTAKER_BASE = 'https://assessment.testgorilla.com';
 const ASSESSMENT_ID = process.env.TG_ASSESSMENT_ID || '1547206';
 
 // Cache the auth token in-memory (survives within the same Lambda warm instance)
@@ -127,7 +128,7 @@ async function findExistingCandidate(token, email) {
     );
     if (match) {
       return match.invitation_link ||
-        (match.invitation_uuid ? `${TG_BASE}/testtaker/welcome/${match.invitation_uuid}` : null);
+        (match.invitation_uuid ? `${TG_TESTTAKER_BASE}/testtaker/welcome/${match.invitation_uuid}` : null);
     }
   }
 
@@ -192,7 +193,7 @@ export default async function handler(req, res) {
     } else {
       // Use invitation_uuid directly from invite response (no extra API call needed)
       if (inviteResult.invitation_uuid) {
-        redirectUrl = `${TG_BASE}/testtaker/welcome/${inviteResult.invitation_uuid}`;
+        redirectUrl = `${TG_TESTTAKER_BASE}/testtaker/welcome/${inviteResult.invitation_uuid}`;
       } else {
         throw new Error('No invitation_uuid in invite response');
       }
