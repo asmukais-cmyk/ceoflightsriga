@@ -7,7 +7,7 @@
  *
  * Flow:
  *  1. Authenticate with TestGorilla (login → token, cached 50min)
- *  2. Invite candidate with no_email=true (suppress TG email)
+ *  2. Invite candidate (TestGorilla sends email with assessment link)
  *  3. Return direct assessment URL from invitation_uuid
  *
  * Edge cases:

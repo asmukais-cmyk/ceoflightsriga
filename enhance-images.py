@@ -45,38 +45,38 @@ PHOTOS = [
         "out": "slide-03-lounge-close",
         "brightness": 1.10,
         "color": 1.08,
-        "crop_bias": 0.15,
+        "crop_bias": 0.35,  # Center on lounge furniture, less ceiling/AC
     },
     {
         "src": os.path.join(ICLOUD_DIR, "IMG_6904.JPEG"),
         "out": "slide-04-lounge-corridor",
         "brightness": 1.14,
-        "crop_bias": 0.15,  # Slide slightly up to capture ceiling arches/skylights
+        "crop_bias": 0.30,  # Show corridor depth, less bare ceiling
     },
     {
         "src": os.path.join(OFFICE_DIR, "Office6.JPEG"),
         "out": "slide-05-stations-above",
         "brightness": 1.10,
-        "crop_bias": 0.15,
+        "crop_bias": 0.35,  # Center on workstations, less glass ceiling
     },
     {
         "src": os.path.join(ICLOUD_DIR, "IMG_6757.JPEG"),
         "out": "slide-06-stations-detail",
         "brightness": 1.12,
         "sharpness": 1.18,
-        "crop_bias": 0.15,
+        "crop_bias": 0.40,  # Center on workstations/plant, less fluorescent lights
     },
     {
         "src": os.path.join(OFFICE_DIR, "Office9.JPEG"),
         "out": "slide-07-world-clocks",
         "brightness": 1.10,
-        "crop_bias": 0.05,  # Bias toward top to show clocks and full glass frame
+        "crop_bias": 0.25,  # Center on clocks and glass partition, less plain ceiling
     },
     {
         "src": os.path.join(OFFICE_DIR, "Office7.JPEG"),
         "out": "slide-08-floor-spacious",
         "brightness": 1.10,
-        "crop_bias": 0.15,
+        "crop_bias": 0.35,  # Center on office floor, less ceiling/lights
     },
     {
         "src": os.path.join(ICLOUD_DIR, "IMG_6761.JPEG"),
@@ -88,25 +88,21 @@ PHOTOS = [
         "out": "slide-10-plant-view",
         "brightness": 1.15,
         "contrast": 1.10,
-        "crop_bias": 0.15,
+        "crop_bias": 0.30,  # Show plant and depth, less ceiling
+    },
+    {
+        "src": os.path.join(OFFICE_DIR, "Office4.JPG"),
+        "out": "slide-11-station-closeup",
+        "brightness": 1.20,
+        "contrast": 1.10,
     },
 ]
 
 
 def auto_orient(img):
-    """Fix EXIF orientation."""
+    """Fix EXIF orientation using Pillow's built-in handler."""
     try:
-        from PIL import ExifTags
-        exif = img._getexif()
-        if exif:
-            for tag, value in exif.items():
-                if ExifTags.TAGS.get(tag) == "Orientation":
-                    if value == 3:
-                        img = img.rotate(180, expand=True)
-                    elif value == 6:
-                        img = img.rotate(270, expand=True)
-                    elif value == 8:
-                        img = img.rotate(90, expand=True)
+        img = ImageOps.exif_transpose(img)
     except Exception:
         pass
     return img

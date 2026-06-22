@@ -50,21 +50,25 @@ const leftRevealObs = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
+// FIX #8: Corrected selectors — old code targeted .benefits-image / .team-image which don't exist
 document.querySelectorAll('.benefits-text, .team-text').forEach(el => {
   el.classList.add('reveal-left');
   leftRevealObs.observe(el);
 });
-document.querySelectorAll('.benefits-image, .team-image').forEach(el => {
+document.querySelectorAll('.benefits-images-collage, .photo-slider').forEach(el => {
   el.classList.add('reveal-right');
   leftRevealObs.observe(el);
 });
 
-// Smooth scroll for anchor links
+// FIX #4: Smooth scroll for anchor links — skip non-fragment hrefs and bare "#"
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
-    e.preventDefault();
-    const target = document.querySelector(a.getAttribute('href'));
+    const href = a.getAttribute('href');
+    // Skip bare "#" (used as placeholder) and any href that's been dynamically changed to a full URL
+    if (!href || href === '#' || href.length < 2) return;
+    const target = document.querySelector(href);
     if (target) {
+      e.preventDefault();
       const navH = nav.offsetHeight || 70;
       const y = target.getBoundingClientRect().top + window.scrollY - navH - 12;
       window.scrollTo({ top: y, behavior: 'smooth' });
@@ -85,14 +89,24 @@ if (slider) {
   let autoPlayTimer = null;
   const slideCount = slides.length;
   
-  // Create indicator dots dynamically
+  // FIX #7: Create accessible indicator dots
   slides.forEach((_, idx) => {
     const dot = document.createElement('div');
     dot.className = `slider-dot${idx === 0 ? ' active' : ''}`;
+    dot.setAttribute('role', 'button');
+    dot.setAttribute('tabindex', '0');
     dot.setAttribute('aria-label', `Go to slide ${idx + 1}`);
     dot.addEventListener('click', () => {
       goToSlide(idx);
       resetAutoPlay();
+    });
+    // Keyboard support for dots
+    dot.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        goToSlide(idx);
+        resetAutoPlay();
+      }
     });
     dotsContainer.appendChild(dot);
   });
@@ -103,6 +117,7 @@ if (slider) {
     track.style.transform = `translateX(-${currentIndex * 100}%)`;
     dots.forEach((dot, idx) => {
       dot.classList.toggle('active', idx === currentIndex);
+      dot.setAttribute('aria-current', idx === currentIndex ? 'true' : 'false');
     });
   }
   
@@ -137,7 +152,10 @@ if (slider) {
   }
   
   function stopAutoPlay() {
-    if (autoPlayTimer) clearInterval(autoPlayTimer);
+    if (autoPlayTimer) {
+      clearInterval(autoPlayTimer);
+      autoPlayTimer = null;
+    }
   }
   
   function resetAutoPlay() {
@@ -145,15 +163,24 @@ if (slider) {
     startAutoPlay();
   }
   
-  // Keyboard arrow controls
+  // FIX #5: Keyboard arrow controls — only when slider or its children have focus,
+  // or when no interactive element is focused (body-level)
   window.addEventListener('keydown', (e) => {
-    // Only intercept if the user's cursor isn't in an input field
-    if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+    const active = document.activeElement;
+    const tag = active ? active.tagName : '';
+    // Never intercept when user is in an input, textarea, select, or contenteditable
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' ||
+        (active && active.isContentEditable)) return;
     
-    // Check if slider is visible in viewport
+    // Only intercept if slider is visible in viewport
     const rect = slider.getBoundingClientRect();
     const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
     if (!isVisible) return;
+    
+    // Only act if focus is on body/document or within the slider itself
+    const focusInSlider = slider.contains(active);
+    const focusOnBody = !active || active === document.body || active === document.documentElement;
+    if (!focusInSlider && !focusOnBody) return;
     
     if (e.key === 'ArrowLeft') {
       prevSlide();
@@ -164,25 +191,27 @@ if (slider) {
     }
   });
   
-  // Hover/touch interaction pauses autoplay
+  // FIX #10: Consolidated touch/hover handlers to prevent autoplay race condition
+  let touchStartX = 0;
+  let isSwiping = false;
+  let swipeHandled = false;
+
   slider.addEventListener('mouseenter', stopAutoPlay);
-  slider.addEventListener('mouseleave', startAutoPlay);
-  slider.addEventListener('touchstart', stopAutoPlay, { passive: true });
-  slider.addEventListener('touchend', startAutoPlay, { passive: true });
-  
-  // Swipe / Drag support for mobile
-  let startX = 0;
-  let isDragging = false;
-  
+  slider.addEventListener('mouseleave', () => {
+    if (!isSwiping) startAutoPlay();
+  });
+
   slider.addEventListener('touchstart', (e) => {
-    startX = e.touches[0].clientX;
-    isDragging = true;
+    stopAutoPlay();
+    touchStartX = e.touches[0].clientX;
+    isSwiping = true;
+    swipeHandled = false;
   }, { passive: true });
   
   slider.addEventListener('touchmove', (e) => {
-    if (!isDragging) return;
+    if (!isSwiping || swipeHandled) return;
     const currentX = e.touches[0].clientX;
-    const diff = startX - currentX;
+    const diff = touchStartX - currentX;
     
     // Threshold of 60px for swipe gesture
     if (Math.abs(diff) > 60) {
@@ -191,13 +220,15 @@ if (slider) {
       } else {
         prevSlide();
       }
-      isDragging = false; // Prevent multiple triggers in one gesture
-      resetAutoPlay();
+      swipeHandled = true; // Prevent multiple triggers in one gesture
     }
   }, { passive: true });
   
   slider.addEventListener('touchend', () => {
-    isDragging = false;
+    isSwiping = false;
+    swipeHandled = false;
+    // Restart autoplay after touch interaction ends
+    startAutoPlay();
   }, { passive: true });
   
   // Initialize slider
@@ -267,7 +298,8 @@ if (applyForm) {
     if (!firstName) { showFieldError(firstNameInput, 'First name is required'); valid = false; }
     if (!lastName) { showFieldError(lastNameInput, 'Last name is required'); valid = false; }
     if (!email) { showFieldError(emailInput, 'Email is required'); valid = false; }
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError(emailInput, 'Please enter a valid email'); valid = false; }
+    // FIX #18: Tightened email regex — require 2+ char TLD
+    else if (!/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email)) { showFieldError(emailInput, 'Please enter a valid email'); valid = false; }
 
     if (!valid) {
       const firstErr = applyForm.querySelector('.input-error');
@@ -313,7 +345,10 @@ if (applyForm) {
     }
   });
 
-  // Success state with countdown + copy link
+  // FIX #1 & #2: Success state — no listener leaks, proper cleanup
+  let countdownInterval = null;
+  let copyBtnBound = false;
+
   function showSuccessState(url) {
     const successEl = document.getElementById('apply-success');
     const linkUrlEl = document.getElementById('apply-link-url');
@@ -325,33 +360,66 @@ if (applyForm) {
     applyForm.hidden = true;
     successEl.hidden = false;
 
-    // Set link
+    // Set link — update both property AND attribute so it works as a real link
     linkUrlEl.textContent = url;
     goNowBtn.href = url;
+    goNowBtn.setAttribute('href', url);
 
-    // Copy button
-    copyBtn.addEventListener('click', () => {
-      navigator.clipboard.writeText(url).then(() => {
-        const copyIcon = copyBtn.querySelector('.copy-icon');
-        const checkIcon = copyBtn.querySelector('.check-icon');
-        copyIcon.style.display = 'none';
-        checkIcon.style.display = 'block';
-        setTimeout(() => {
-          copyIcon.style.display = 'block';
-          checkIcon.style.display = 'none';
-        }, 2000);
+    // FIX #1: Guard against double-binding the copy button listener
+    if (!copyBtnBound) {
+      copyBtnBound = true;
+      copyBtn.addEventListener('click', () => {
+        const linkUrl = document.getElementById('apply-link-url').textContent;
+        navigator.clipboard.writeText(linkUrl).then(() => {
+          const copyIcon = copyBtn.querySelector('.copy-icon');
+          const checkIcon = copyBtn.querySelector('.check-icon');
+          copyIcon.style.display = 'none';
+          checkIcon.style.display = 'block';
+          setTimeout(() => {
+            copyIcon.style.display = 'block';
+            checkIcon.style.display = 'none';
+          }, 2000);
+        }).catch(() => {
+          // Fallback: select the text so user can Ctrl+C
+          const range = document.createRange();
+          range.selectNodeContents(document.getElementById('apply-link-url'));
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        });
       });
-    });
+    }
+
+    // FIX #2: Clear any previous countdown before starting a new one
+    if (countdownInterval) clearInterval(countdownInterval);
+
+    // FIX #2: Clear countdown when "Start Now" is clicked
+    goNowBtn.addEventListener('click', () => {
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+      }
+    }, { once: true });
 
     // Countdown + redirect
     let seconds = 5;
-    const countdownInterval = setInterval(() => {
+    countdownEl.textContent = seconds;
+    countdownInterval = setInterval(() => {
       seconds--;
       countdownEl.textContent = seconds;
       if (seconds <= 0) {
         clearInterval(countdownInterval);
+        countdownInterval = null;
         window.location.href = url;
       }
     }, 1000);
   }
+
+  // FIX #2: Handle bfcache — clear countdown if user navigates back
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted && countdownInterval) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+    }
+  });
 }
