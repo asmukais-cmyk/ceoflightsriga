@@ -141,6 +141,7 @@ img{display:block;max-width:100%;height:auto}
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   background: var(--navy-mid);
+  touch-action: pan-y;
 }
 .photo-slider-track {
   display: flex;
@@ -525,7 +526,7 @@ img{display:block;max-width:100%;height:auto}
   .hiring-step{padding:32px 24px 28px}
 }
 @media(max-width:640px){
-  .section{padding:56px 0}
+  .section{padding:40px 0}
   .container{padding:0 20px}
   .section-desc{font-size:1rem;margin-bottom:36px;line-height:1.7}
   .hero{min-height:auto}
@@ -583,13 +584,13 @@ img{display:block;max-width:100%;height:auto}
   .photo-slider .slider-control.prev{left:8px}
   .photo-slider .slider-control.next{right:8px}
   .photo-slider .slider-control svg{width:20px;height:20px}
-  .cta-section{padding:48px 0 72px}
+  .cta-section{padding:32px 0 72px}
   .cta-card{padding:36px 20px;border-radius:var(--radius)}
   .cta-card h2{font-size:clamp(1.5rem,6vw,2rem);margin-bottom:10px}
   .cta-card>p{font-size:0.95rem;margin-bottom:28px}
   .apply-form{max-width:100%}
   .apply-label{font-size:11px;margin-bottom:6px}
-  .apply-input{padding:13px 16px;font-size:15px;border-radius:8px}
+  .apply-input{padding:13px 16px;font-size:16px;border-radius:8px}
   .apply-submit{padding:15px 28px}
   .cta-notes{margin-top:28px;gap:12px}
   .cta-note{padding:14px 16px;font-size:12px;line-height:1.55}

@@ -203,6 +203,7 @@ if (slider) {
   
   // FIX #10: Consolidated touch/hover handlers to prevent autoplay race condition
   let touchStartX = 0;
+  let touchStartY = 0;
   let isSwiping = false;
   let swipeHandled = false;
 
@@ -214,6 +215,7 @@ if (slider) {
   slider.addEventListener('touchstart', (e) => {
     stopAutoPlay();
     touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
     isSwiping = true;
     swipeHandled = false;
   }, { passive: true });
@@ -221,18 +223,25 @@ if (slider) {
   slider.addEventListener('touchmove', (e) => {
     if (!isSwiping || swipeHandled) return;
     const currentX = e.touches[0].clientX;
-    const diff = touchStartX - currentX;
+    const currentY = e.touches[0].clientY;
+    const diffX = touchStartX - currentX;
+    const diffY = touchStartY - currentY;
     
-    // Threshold of 60px for swipe gesture
-    if (Math.abs(diff) > 60) {
-      if (diff > 0) {
+    // If horizontal movement exceeds vertical, prevent page scroll
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+      e.preventDefault();
+    }
+    
+    // Threshold of 50px for swipe gesture
+    if (Math.abs(diffX) > 50) {
+      if (diffX > 0) {
         nextSlide();
       } else {
         prevSlide();
       }
-      swipeHandled = true; // Prevent multiple triggers in one gesture
+      swipeHandled = true;
     }
-  }, { passive: true });
+  }, { passive: false });
   
   slider.addEventListener('touchend', () => {
     isSwiping = false;
