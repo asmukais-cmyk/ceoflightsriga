@@ -232,6 +232,13 @@ img{display:block;max-width:100%;height:auto}
   border-radius: 4px;
   background: var(--gold);
 }
+.slider-counter {
+  display: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.5px;
+}
 
 /* --- Benefits Section --- */
 .benefits-section{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
