@@ -14,12 +14,55 @@
  *  - Duplicate invite (REPEATING_INVITATION): looks up existing link
  *  - Bad email (BAD_EMAIL_IPSCORE): returns user-friendly error
  *  - Auth token expired: clears cache, next request re-authenticates
+ *
+ * Security:
+ *  - CORS restricted to production domain
+ *  - In-memory rate limiting (5 req/min per IP)
+ *  - Input sanitization with length limits
  */
 
 const TG_BASE = 'https://app.testgorilla.com';
 const TG_TESTTAKER_BASE = 'https://talent-assessment.testgorilla.com';
-const ASSESSMENT_ID = process.env.TG_ASSESSMENT_ID || '1547206';
+const ASSESSMENT_ID = process.env.TG_ASSESSMENT_ID;
 
+// ---------- Rate Limiting ----------
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX = 5; // max 5 requests per minute per IP
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW) {
+    rateLimitMap.set(ip, { windowStart: now, count: 1 });
+    return false;
+  }
+
+  entry.count++;
+  if (entry.count > RATE_LIMIT_MAX) {
+    return true;
+  }
+  return false;
+}
+
+// Clean stale entries every 5 minutes to prevent memory growth
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, entry] of rateLimitMap) {
+    if (now - entry.windowStart > RATE_LIMIT_WINDOW * 2) {
+      rateLimitMap.delete(ip);
+    }
+  }
+}, 5 * 60 * 1000);
+
+// ---------- Input Sanitization ----------
+function sanitizeString(str, maxLength = 100) {
+  if (typeof str !== 'string') return '';
+  return str.trim().slice(0, maxLength).replace(/[<>]/g, '');
+}
+
+// ---------- Auth Token Cache ----------
 // Cache the auth token in-memory (survives within the same Lambda warm instance)
 let cachedToken = null;
 let tokenExpiry = 0;
@@ -32,7 +75,7 @@ async function getToken() {
   const password = process.env.TG_PASSWORD;
 
   if (!username || !password) {
-    throw new Error('Missing TG_USERNAME or TG_PASSWORD environment variables');
+    throw new Error('Missing TG credentials');
   }
 
   const res = await fetch(`${TG_BASE}/api/profiles/login/`, {
@@ -45,8 +88,7 @@ async function getToken() {
   });
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`TestGorilla login failed (${res.status}): ${text}`);
+    throw new Error(`Auth failed (${res.status})`);
   }
 
   const data = await res.json();
@@ -100,7 +142,7 @@ async function inviteCandidate(token, { firstName, lastName, email }) {
       } catch (_) { /* not JSON, fall through */ }
     }
 
-    throw new Error(`Invite failed (${res.status}): ${text}`);
+    throw new Error(`Invite failed (${res.status})`);
   }
 
   return await res.json();
@@ -136,8 +178,12 @@ async function findExistingCandidate(token, email) {
 }
 
 export default async function handler(req, res) {
-  // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS — restrict to production domain only
+  const allowedOrigin = process.env.ALLOWED_ORIGIN || 'https://ceoflightsriga.lv';
+  const origin = req.headers.origin || '';
+  if (origin === allowedOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -149,20 +195,31 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Rate limiting
+  const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown';
+  if (isRateLimited(clientIp)) {
+    return res.status(429).json({ error: 'Too many requests. Please wait a moment and try again.' });
+  }
+
   try {
     if (!req.body) {
       return res.status(400).json({ error: 'Request body is required' });
     }
-    const { firstName, lastName, email } = req.body;
+    const { firstName: rawFirst, lastName: rawLast, email: rawEmail } = req.body;
+
+    // Sanitize inputs
+    const firstName = sanitizeString(rawFirst, 50);
+    const lastName = sanitizeString(rawLast, 50);
+    const email = sanitizeString(rawEmail, 254).toLowerCase();
 
     // Validation
-    if (!firstName || !firstName.trim()) {
+    if (!firstName) {
       return res.status(400).json({ error: 'First name is required' });
     }
-    if (!lastName || !lastName.trim()) {
+    if (!lastName) {
       return res.status(400).json({ error: 'Last name is required' });
     }
-    if (!email || !email.trim() || !email.includes('@')) {
+    if (!email || !email.includes('@') || !/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(email)) {
       return res.status(400).json({ error: 'A valid email address is required' });
     }
 
@@ -171,9 +228,9 @@ export default async function handler(req, res) {
 
     // Step 2: Invite the candidate
     const inviteResult = await inviteCandidate(token, {
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      email: email.trim().toLowerCase(),
+      firstName,
+      lastName,
+      email,
     });
 
     let redirectUrl;
@@ -184,7 +241,7 @@ export default async function handler(req, res) {
 
     if (inviteResult.duplicate) {
       // Candidate already exists — find their existing link
-      redirectUrl = await findExistingCandidate(token, email.trim().toLowerCase());
+      redirectUrl = await findExistingCandidate(token, email);
       if (!redirectUrl) {
         return res.status(400).json({
           error: 'You have already been invited to this assessment. Please check your email for the original invitation link.',
@@ -195,13 +252,13 @@ export default async function handler(req, res) {
       if (inviteResult.invitation_uuid) {
         redirectUrl = `${TG_TESTTAKER_BASE}/${inviteResult.invitation_uuid}`;
       } else {
-        throw new Error('No invitation_uuid in invite response');
+        throw new Error('No invitation_uuid in response');
       }
     }
 
     return res.status(200).json({ redirectUrl });
   } catch (err) {
-    console.error('Invite error:', err);
+    console.error('Invite error:', err.message);
 
     // If token expired, clear cache
     if (err.message && err.message.includes('401')) {
@@ -210,7 +267,7 @@ export default async function handler(req, res) {
     }
 
     return res.status(500).json({
-      error: 'Something went wrong. Please try again or contact HR@ceoflights.com',
+      error: 'Something went wrong. Please try again or contact HR@ceoflights.com'
     });
   }
 }

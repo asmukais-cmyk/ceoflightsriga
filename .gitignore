@@ -2,5 +2,8 @@
 node_modules/
 Office/
 .vercel/
-
 .vercel
+
+# Local development/utility scripts (contain API references, not for production)
+*.py
+*.mjs

@@ -47,9 +47,10 @@ git push origin dev
 
 | Variable | Description |
 |----------|-------------|
-| `TG_USERNAME` | TestGorilla account email |
-| `TG_PASSWORD` | TestGorilla account password |
-| `TG_ASSESSMENT_ID` | Assessment ID (default: `1547206`) |
+| `TG_USERNAME` | TestGorilla credentials (see Vercel dashboard) |
+| `TG_PASSWORD` | TestGorilla credentials (see Vercel dashboard) |
+| `TG_ASSESSMENT_ID` | Assessment identifier |
+| `ALLOWED_ORIGIN` | CORS allowed origin (default: `https://ceoflightsriga.lv`) |
 
 ## Local Development
 
