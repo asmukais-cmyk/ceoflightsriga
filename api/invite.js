@@ -56,7 +56,7 @@ async function getToken() {
 }
 
 async function inviteCandidate(token, { firstName, lastName, email }) {
-  const url = `${TG_BASE}/api/assessments/${ASSESSMENT_ID}/invite_candidate/?no_email=true`;
+  const url = `${TG_BASE}/api/assessments/${ASSESSMENT_ID}/invite_candidate/`;
 
   const res = await fetch(url, {
     method: 'POST',

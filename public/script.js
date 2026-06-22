@@ -297,10 +297,8 @@ if (applyForm) {
 
       if (data.redirectUrl) {
         setLoading(false);
-        showMessage('Success! Redirecting you to the assessment…', 'success');
-        setTimeout(() => {
-          window.location.href = data.redirectUrl;
-        }, 1200);
+        // Show success state with link + countdown
+        showSuccessState(data.redirectUrl);
       } else {
         throw new Error('No redirect URL received');
       }
@@ -314,4 +312,46 @@ if (applyForm) {
       }
     }
   });
+
+  // Success state with countdown + copy link
+  function showSuccessState(url) {
+    const successEl = document.getElementById('apply-success');
+    const linkUrlEl = document.getElementById('apply-link-url');
+    const countdownEl = document.getElementById('redirect-countdown');
+    const copyBtn = document.getElementById('apply-copy-btn');
+    const goNowBtn = document.getElementById('apply-go-now');
+
+    // Hide form, show success
+    applyForm.hidden = true;
+    successEl.hidden = false;
+
+    // Set link
+    linkUrlEl.textContent = url;
+    goNowBtn.href = url;
+
+    // Copy button
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(url).then(() => {
+        const copyIcon = copyBtn.querySelector('.copy-icon');
+        const checkIcon = copyBtn.querySelector('.check-icon');
+        copyIcon.style.display = 'none';
+        checkIcon.style.display = 'block';
+        setTimeout(() => {
+          copyIcon.style.display = 'block';
+          checkIcon.style.display = 'none';
+        }, 2000);
+      });
+    });
+
+    // Countdown + redirect
+    let seconds = 5;
+    const countdownInterval = setInterval(() => {
+      seconds--;
+      countdownEl.textContent = seconds;
+      if (seconds <= 0) {
+        clearInterval(countdownInterval);
+        window.location.href = url;
+      }
+    }, 1000);
+  }
 }

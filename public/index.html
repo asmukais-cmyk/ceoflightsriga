@@ -308,53 +308,85 @@
       <div class="team-layout">
         <div class="photo-slider" id="office-slider">
           <div class="photo-slider-track">
-            <!-- Slide 1: Office Wide -->
+            <!-- Slide 1: Office Panorama -->
             <div class="photo-slider-slide">
               <picture>
-                <source srcset="images/office-wide.webp" type="image/webp">
-                <img src="images/office-wide.jpg" alt="CEOFLIGHTS wide office floor" loading="lazy">
+                <source srcset="images/slide-01-panorama.webp" type="image/webp">
+                <img src="images/slide-01-panorama.jpg" alt="CEOFLIGHTS office panorama with lounge and workstations" loading="lazy">
               </picture>
-              <div class="photo-slider-caption">Main Office Floor</div>
+              <div class="photo-slider-caption"></div>
             </div>
-            <!-- Slide 2: Office Floor -->
+            <!-- Slide 2: Wide Floor View -->
             <div class="photo-slider-slide">
               <picture>
-                <source srcset="images/office-floor.webp" type="image/webp">
-                <img src="images/office-floor.jpg" alt="CEOFLIGHTS workstations" loading="lazy">
+                <source srcset="images/slide-02-floor-wide.webp" type="image/webp">
+                <img src="images/slide-02-floor-wide.jpg" alt="Wide view of office floor with calling stations and plants" loading="lazy">
               </picture>
-              <div class="photo-slider-caption">Custom Calling Stations</div>
+              <div class="photo-slider-caption"></div>
             </div>
-            <!-- Slide 3: Office Lounge -->
+            <!-- Slide 3: Lounge Close-up -->
             <div class="photo-slider-slide">
               <picture>
-                <source srcset="images/office-lounge.webp" type="image/webp">
-                <img src="images/office-lounge.jpg" alt="Office lounge area" loading="lazy">
+                <source srcset="images/slide-03-lounge-close.webp" type="image/webp">
+                <img src="images/slide-03-lounge-close.jpg" alt="Comfortable lounge area with red furniture and flowers" loading="lazy">
               </picture>
-              <div class="photo-slider-caption">Comfortable Breakout Lounge</div>
+              <div class="photo-slider-caption"></div>
             </div>
-            <!-- Slide 4: Office Workstations -->
+            <!-- Slide 4: Lounge Corridor -->
             <div class="photo-slider-slide">
               <picture>
-                <source srcset="images/office-workstations.webp" type="image/webp">
-                <img src="images/office-workstations.jpg" alt="CEOFLIGHTS office overview" loading="lazy">
+                <source srcset="images/slide-04-lounge-corridor.webp" type="image/webp">
+                <img src="images/slide-04-lounge-corridor.jpg" alt="Lounge corridor with red chairs and skylights" loading="lazy">
               </picture>
-              <div class="photo-slider-caption">Private Workstations</div>
+              <div class="photo-slider-caption"></div>
             </div>
-            <!-- Slide 5: Office Detail -->
+            <!-- Slide 5: Stations From Above -->
             <div class="photo-slider-slide">
               <picture>
-                <source srcset="images/office-detail.webp" type="image/webp">
-                <img src="images/office-detail.jpg" alt="Office detail" loading="lazy">
+                <source srcset="images/slide-05-stations-above.webp" type="image/webp">
+                <img src="images/slide-05-stations-above.jpg" alt="Elevated view of private calling stations" loading="lazy">
               </picture>
-              <div class="photo-slider-caption">Lounge Workspace Details</div>
+              <div class="photo-slider-caption"></div>
             </div>
-            <!-- Slide 6: World Clocks -->
+            <!-- Slide 6: Stations Detail -->
             <div class="photo-slider-slide">
               <picture>
-                <source srcset="images/world-clocks.webp" type="image/webp">
-                <img src="images/world-clocks.jpg" alt="World timezone clocks" loading="lazy">
+                <source srcset="images/slide-06-stations-detail.webp" type="image/webp">
+                <img src="images/slide-06-stations-detail.jpg" alt="Close-up of workstations with monitors and headsets" loading="lazy">
               </picture>
-              <div class="photo-slider-caption">U.S. Timezone Clocks</div>
+              <div class="photo-slider-caption"></div>
+            </div>
+            <!-- Slide 7: World Clocks -->
+            <div class="photo-slider-slide">
+              <picture>
+                <source srcset="images/slide-07-world-clocks.webp" type="image/webp">
+                <img src="images/slide-07-world-clocks.jpg" alt="World timezone clocks on frosted glass partition" loading="lazy">
+              </picture>
+              <div class="photo-slider-caption"></div>
+            </div>
+            <!-- Slide 8: Spacious Floor -->
+            <div class="photo-slider-slide">
+              <picture>
+                <source srcset="images/slide-08-floor-spacious.webp" type="image/webp">
+                <img src="images/slide-08-floor-spacious.jpg" alt="Spacious office floor with plants and skylights" loading="lazy">
+              </picture>
+              <div class="photo-slider-caption"></div>
+            </div>
+            <!-- Slide 9: Team Training -->
+            <div class="photo-slider-slide">
+              <picture>
+                <source srcset="images/slide-09-team-training.webp" type="image/webp">
+                <img src="images/slide-09-team-training.jpg" alt="New trainees during their training session" loading="lazy">
+              </picture>
+              <div class="photo-slider-caption"></div>
+            </div>
+            <!-- Slide 10: Plant-Framed View -->
+            <div class="photo-slider-slide">
+              <picture>
+                <source srcset="images/slide-10-plant-view.webp" type="image/webp">
+                <img src="images/slide-10-plant-view.jpg" alt="Office viewed through decorative plants" loading="lazy">
+              </picture>
+              <div class="photo-slider-caption"></div>
             </div>
           </div>
 
@@ -430,6 +462,26 @@
 
           <div class="apply-form-message" id="apply-message" hidden></div>
         </form>
+
+        <!-- Success State (replaces form after submission) -->
+        <div class="apply-success" id="apply-success" hidden>
+          <div class="apply-success-icon">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="24" cy="24" r="20"/>
+              <polyline points="15 24 22 31 34 17"/>
+            </svg>
+          </div>
+          <h3 class="apply-success-title">You're all set!</h3>
+          <p class="apply-success-desc">Redirecting you to the assessment in <span id="redirect-countdown">5</span>s…<br>We've also sent the link to your email.</p>
+          <div class="apply-success-link-box" id="apply-link-box">
+            <span class="apply-success-link-url" id="apply-link-url"></span>
+            <button type="button" class="apply-success-copy-btn" id="apply-copy-btn" title="Copy link">
+              <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+          </div>
+          <a href="#" class="btn btn-gold btn-lg apply-success-go" id="apply-go-now">Start Now →</a>
+        </div>
 
         <div class="cta-notes">
           <div class="cta-note cta-note-warning">
