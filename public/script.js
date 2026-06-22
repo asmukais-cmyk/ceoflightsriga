@@ -389,9 +389,13 @@ if (applyForm) {
     const copyBtn = document.getElementById('apply-copy-btn');
     const goNowBtn = document.getElementById('apply-go-now');
 
-    // Hide form, show success
+    // Hide form and CTA heading/desc, show success
     applyForm.hidden = true;
     successEl.hidden = false;
+    const ctaHeading = document.getElementById('cta-heading');
+    const ctaDesc = document.getElementById('cta-desc');
+    if (ctaHeading) ctaHeading.style.display = 'none';
+    if (ctaDesc) ctaDesc.style.display = 'none';
 
     // Set link — update both property AND attribute so it works as a real link
     linkUrlEl.textContent = url;
@@ -435,7 +439,7 @@ if (applyForm) {
     }, { once: true });
 
     // Countdown + redirect
-    let seconds = 5;
+    let seconds = 10;
     countdownEl.textContent = seconds;
     countdownInterval = setInterval(() => {
       seconds--;
