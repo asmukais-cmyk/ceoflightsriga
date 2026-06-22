@@ -375,6 +375,10 @@ if (applyForm) {
 
       if (data.redirectUrl) {
         setLoading(false);
+        // Fire Meta Pixel Lead event
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead', { content_name: 'TestGorilla Assessment Started' });
+        }
         // Show success state with link + countdown
         showSuccessState(data.redirectUrl);
       } else {
