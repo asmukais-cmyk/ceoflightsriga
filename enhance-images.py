@@ -1,10 +1,10 @@
 """
-Professional office photo enhancement pipeline v2.
+Professional office photo enhancement pipeline v4.
 Unified color grading to make all images look cohesive —
 as if shot by the same photographer at the same time.
 
-Target look: Bright, clean, slightly warm white balance,
-lifted shadows, gentle sharpening — modern corporate editorial style.
+Uses 4:3 aspect ratio to match the slider container exactly,
+preventing double-cropping and making the office feel spacious and large.
 """
 
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
@@ -15,8 +15,8 @@ OUTPUT_DIR = r"c:\ANTIGRAVITY\CEOFLIGHTS Riga\public\images"
 OFFICE_DIR = r"c:\ANTIGRAVITY\CEOFLIGHTS Riga\Office"
 ICLOUD_DIR = os.path.join(OFFICE_DIR, "iCloud Photos from Agris Smukais")
 
-# Target dimensions
-TARGET_W = 1600
+# Target dimensions (4:3 aspect ratio)
+TARGET_W = 1200
 TARGET_H = 900
 
 # Unified base grading profile — cohesive "same session" look
@@ -29,63 +29,66 @@ BASE_PROFILE = {
     "shadow_lift": 15,    # Lift darkest shadows (0-255 range)
 }
 
-# Per-image overrides (only for images that need deviation from base)
+# Per-image overrides and crop preferences
 PHOTOS = [
     {
         "src": os.path.join(OFFICE_DIR, "Office2.jpeg"),
         "out": "slide-01-panorama",
-        # Already well-lit panoramic — use base profile
     },
     {
-        "src": os.path.join(ICLOUD_DIR, "IMG_6761.JPEG"),
-        "out": "slide-02-floor-wide",
-        "brightness": 1.15,  # Slightly darker original
+        "src": os.path.join(OFFICE_DIR, "Office1.jpeg"),
+        "out": "slide-02-office-glass",
+        "brightness": 1.10,
     },
     {
         "src": os.path.join(OFFICE_DIR, "Office5.JPEG"),
         "out": "slide-03-lounge-close",
-        "brightness": 1.10,  # Already warm
+        "brightness": 1.10,
         "color": 1.08,
+        "crop_bias": 0.15,
     },
     {
         "src": os.path.join(ICLOUD_DIR, "IMG_6904.JPEG"),
         "out": "slide-04-lounge-corridor",
         "brightness": 1.14,
+        "crop_bias": 0.15,  # Slide slightly up to capture ceiling arches/skylights
     },
     {
         "src": os.path.join(OFFICE_DIR, "Office6.JPEG"),
         "out": "slide-05-stations-above",
         "brightness": 1.10,
+        "crop_bias": 0.15,
     },
     {
-        "src": os.path.join(OFFICE_DIR, "Office3.jpeg"),
+        "src": os.path.join(ICLOUD_DIR, "IMG_6757.JPEG"),
         "out": "slide-06-stations-detail",
         "brightness": 1.12,
         "sharpness": 1.18,
+        "crop_bias": 0.15,
     },
     {
         "src": os.path.join(OFFICE_DIR, "Office9.JPEG"),
         "out": "slide-07-world-clocks",
         "brightness": 1.10,
+        "crop_bias": 0.05,  # Bias toward top to show clocks and full glass frame
     },
     {
         "src": os.path.join(OFFICE_DIR, "Office7.JPEG"),
         "out": "slide-08-floor-spacious",
         "brightness": 1.10,
+        "crop_bias": 0.15,
     },
     {
-        "src": os.path.join(ICLOUD_DIR, "IMG_6877.JPEG"),
-        "out": "slide-09-team-training",
-        "brightness": 1.06,  # Already well-lit flash photo
-        "contrast": 1.04,
-        "color": 1.06,
-        "warmth": 0.01,
+        "src": os.path.join(ICLOUD_DIR, "IMG_6761.JPEG"),
+        "out": "slide-09-floor-stations",
+        "brightness": 1.15,
     },
     {
         "src": os.path.join(OFFICE_DIR, "Office10.JPEG"),
         "out": "slide-10-plant-view",
-        "brightness": 1.15,  # Darker original (shot through plants)
+        "brightness": 1.15,
         "contrast": 1.10,
+        "crop_bias": 0.15,
     },
 ]
 
@@ -109,19 +112,19 @@ def auto_orient(img):
     return img
 
 
-def center_crop_16_9(img):
-    """Crop image to 16:9 from center."""
+def crop_4_3(img, bias=0.5):
+    """Crop image to 4:3 with customizable center bias (0.0 = top/left, 1.0 = bottom/right)."""
     w, h = img.size
-    target_ratio = 16 / 9
+    target_ratio = 4 / 3
     img_ratio = w / h
 
     if img_ratio > target_ratio:
         new_w = int(h * target_ratio)
-        left = (w - new_w) // 2
+        left = int((w - new_w) * bias)
         return img.crop((left, 0, left + new_w, h))
     else:
         new_h = int(w / target_ratio)
-        top = (h - new_h) // 2
+        top = int((h - new_h) * bias)
         return img.crop((0, top, w, top + new_h))
 
 
@@ -129,7 +132,6 @@ def lift_shadows(img, amount):
     """Lift the darkest shadows to create a more editorial/modern look."""
     if amount <= 0:
         return img
-    # Simple curves adjustment: map 0 -> amount, 255 -> 255
     lut = []
     for i in range(256):
         lut.append(int(amount + (255 - amount) * i / 255))
@@ -141,13 +143,12 @@ def apply_warmth(img, amount):
     if amount <= 0:
         return img
     r, g, b = img.split()
-    # Warm = slight red boost + slight blue reduction
     r_shift = int(amount * 255)
     b_shift = int(amount * 255)
 
     r_lut = [min(255, i + r_shift) for i in range(256)]
     b_lut = [max(0, i - b_shift) for i in range(256)]
-    g_lut = list(range(256))  # Green unchanged
+    g_lut = list(range(256))
 
     r = r.point(r_lut)
     b = b.point(b_lut)
@@ -158,6 +159,7 @@ def process_photo(photo_config):
     """Full processing pipeline for one photo."""
     src = photo_config["src"]
     out_name = photo_config["out"]
+    bias = photo_config.get("crop_bias", 0.5)
 
     # Merge base profile with per-image overrides
     profile = dict(BASE_PROFILE)
@@ -165,13 +167,13 @@ def process_photo(photo_config):
         if key in photo_config:
             profile[key] = photo_config[key]
 
-    print(f"Processing {os.path.basename(src)} -> {out_name}")
+    print(f"Processing {os.path.basename(src)} -> {out_name} (crop_bias={bias})")
 
     img = Image.open(src).convert("RGB")
     img = auto_orient(img)
 
-    # Center crop to 16:9
-    img = center_crop_16_9(img)
+    # Custom crop to 4:3
+    img = crop_4_3(img, bias)
 
     # Resize to target
     img = img.resize((TARGET_W, TARGET_H), Image.LANCZOS)
@@ -203,7 +205,7 @@ def process_photo(photo_config):
 if __name__ == "__main__":
     # Clean up old slide images
     for f in os.listdir(OUTPUT_DIR):
-        if f.startswith("office-") or f.startswith("world-") or f.startswith("slide-"):
+        if f.startswith("slide-"):
             os.remove(os.path.join(OUTPUT_DIR, f))
             print(f"  Removed old: {f}")
 

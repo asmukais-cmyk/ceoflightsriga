@@ -1,8 +1,8 @@
 """
-Enhance office-lounge image:
+Enhance IMG_6904 (office lounge) for the slider:
 - Crop off heater/radiator on left side
-- Enhance resolution and quality
-- Professional photographer feel with better color grading
+- Professional photographer enhancement
+- Output as landscape for proper slider display
 """
 
 import os, sys, io, base64
@@ -22,22 +22,19 @@ if not api_key:
 
 client = genai.Client(api_key=api_key)
 
-# Load source image
-source_path = Path(r"c:\ANTIGRAVITY\CEOFLIGHTS Riga\public\images\office-lounge.jpg")
+# Load the ORIGINAL source image (IMG_6904)
+source_path = Path(r"c:\ANTIGRAVITY\CEOFLIGHTS Riga\Office\iCloud Photos from Agris Smukais\IMG_6904.JPEG")
 source_img = PILImage.open(source_path)
+if source_img.mode == "RGBA":
+    source_img = source_img.convert("RGB")
 print(f"Original size: {source_img.size}")
 
-# Step 1: Crop off the left side (heater + fire sign area) and bottom empty floor
-# The heater takes roughly the left 35% of the image
+# Step 1: Crop off the heater from the left side
+# Image is portrait ~960x1280. Heater is on the left ~15-18% of the width
 w, h = source_img.size
-crop_left = int(w * 0.35)  # Crop ~35% from left to fully remove heater/radiator
-crop_bottom = int(h * 0.15)  # Trim some empty floor from bottom
-cropped = source_img.crop((crop_left, 0, w, h - crop_bottom))
+crop_left = int(w * 0.16)  # Crop ~16% from left to cut off most of the heater
+cropped = source_img.crop((crop_left, 0, w, h))
 print(f"Cropped size: {cropped.size}")
-
-# Convert for API
-if cropped.mode == "RGBA":
-    cropped = cropped.convert("RGB")
 
 # Resize for API input (max 1536)
 max_dim = 1536
@@ -45,22 +42,23 @@ if max(cropped.size) > max_dim:
     cropped.thumbnail((max_dim, max_dim), PILImage.LANCZOS)
     print(f"Resized for API: {cropped.size}")
 
-# Step 2: Enhance with Gemini
-edit_prompt = """Enhance this office lounge photograph to professional editorial quality.
+# Step 2: Enhance with Gemini - use 16:9 for landscape slider display
+edit_prompt = """Enhance this office lounge photograph to professional editorial quality suitable for a premium company website.
 
-KEEP EXACTLY: The same room, same furniture (red chairs, red sofa, flowers in vase, round wooden coffee table, grey carpet), same composition and perspective. Do NOT add or remove any furniture or objects.
+KEEP EXACTLY: The same room, same furniture arrangement (red lounge chairs, red sofa, white lily flowers in vase on round wooden coffee table, grey carpet tiles, blue acoustic divider panels on the right side, skylights in the ceiling). Keep the same perspective and depth showing the office extending back. Do NOT add, remove, or rearrange any furniture or objects.
 
 ENHANCE:
-- Professional photographer color grading: warm, inviting tones with slightly desaturated shadows
-- Improved lighting: make it look like it was shot with professional studio lighting - soft, even illumination 
-- Sharpen details on furniture textures, carpet weave, and flower petals
-- Subtle depth of field effect - slightly softer background with sharp foreground
-- Clean, modern interior photography feel like an Airbnb listing or architectural magazine
-- Rich, true red on the chairs and sofa without oversaturation
-- Neutral, balanced white walls without yellow cast
-- Add subtle warm ambient light feel
+- Professional architectural/interior photographer quality — like a high-end coworking space or WeWork listing
+- Perfect white balance: clean neutral whites on walls, no yellow or pink cast
+- Rich, vibrant true red on the chairs and sofa — saturated but natural, not neon
+- Sharpen all textures: fabric weave on chairs, carpet tile pattern, wood grain on coffee table, flower petal detail
+- Even, balanced lighting throughout — reduce harsh shadows and dark areas
+- Make the skylights look bright and inviting with natural daylight streaming in
+- Subtle professional depth of field — sharp foreground furniture, slightly softer background
+- Clean, modern color grading with warm undertones
+- Remove any visible cables, imperfections on walls, or distracting elements
 
-TECHNICAL: Shot on Sony A7R IV, 24mm f/2.8, natural + fill lighting, Lightroom color grading, architectural interior photography style. No text, no watermarks, no borders."""
+TECHNICAL: Shot on Canon EOS R5, 16-35mm f/2.8 at 24mm, natural window light supplemented with fill, f/5.6 for good depth, ISO 400, professionally post-processed in Lightroom and Photoshop. Architectural interior photography style. No text, no watermarks, no borders, no vignette."""
 
 print("Calling Gemini API for enhancement... (30-60 seconds)")
 response = client.models.generate_content(
@@ -69,7 +67,7 @@ response = client.models.generate_content(
     config=types.GenerateContentConfig(
         response_modalities=["TEXT", "IMAGE"],
         image_config=types.ImageConfig(
-            aspect_ratio="4:3",
+            aspect_ratio="16:9",
             image_size="2K",
         ),
     ),
@@ -78,7 +76,6 @@ response = client.models.generate_content(
 # Save output
 output_dir = Path(r"c:\ANTIGRAVITY\CEOFLIGHTS Riga\public\images")
 timestamp = datetime.now().strftime("%H%M%S")
-output_path = output_dir / f"office-lounge-enhanced_{timestamp}.jpg"
 
 image_saved = False
 for part in response.parts:
@@ -90,12 +87,13 @@ for part in response.parts:
             raw = base64.b64decode(raw)
         img = PILImage.open(io.BytesIO(raw))
         
-        # Save as high-quality JPEG
-        img.save(str(output_path), "JPEG", quality=95)
-        print(f"Saved enhanced: {output_path} ({img.size[0]}x{img.size[1]})")
+        # Save as office-lounge.jpg (replacing current)
+        jpg_path = output_dir / f"office-lounge-v2_{timestamp}.jpg"
+        img.save(str(jpg_path), "JPEG", quality=95)
+        print(f"Saved JPG: {jpg_path} ({img.size[0]}x{img.size[1]})")
         
-        # Also save as WebP for web
-        webp_path = output_dir / f"office-lounge-enhanced_{timestamp}.webp"
+        # Save as WebP
+        webp_path = output_dir / f"office-lounge-v2_{timestamp}.webp"
         img.save(str(webp_path), "WEBP", quality=90, method=6)
         print(f"Saved WebP: {webp_path}")
         

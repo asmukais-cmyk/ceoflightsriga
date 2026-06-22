@@ -16,7 +16,7 @@
   <link rel="icon" type="image/png" href="images/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -25,7 +25,12 @@
   <nav class="nav" id="nav">
     <div class="nav-inner">
       <img src="images/logo.png" alt="CEOFLIGHTS Riga" class="nav-logo">
-      <a href="#apply" class="nav-cta" id="nav-apply-btn">Apply Now</a>
+      <div class="nav-links">
+        <a href="#role" class="nav-link">The Role</a>
+        <a href="#benefits" class="nav-link">Benefits</a>
+        <a href="#team" class="nav-link">Office</a>
+        <a href="#apply" class="nav-link nav-link-cta" id="nav-apply-btn">Apply →</a>
+      </div>
     </div>
   </nav>
 
@@ -33,8 +38,15 @@
   <header class="hero" id="hero">
     <div class="hero-bg">
       <picture>
-        <source srcset="images/hero.webp" type="image/webp">
-        <img src="images/hero.jpg" alt="CEOFLIGHTS Riga modern office">
+        <!-- Desktop: Office2 panoramic landscape (lounge + workstations + clocks) -->
+        <source media="(min-width: 961px)" srcset="images/hero-desktop.webp" type="image/webp">
+        <source media="(min-width: 961px)" srcset="images/hero-desktop.jpg">
+        <!-- Tablet: Office6 center crop 4:3 (workstations + ceiling depth) -->
+        <source media="(min-width: 641px)" srcset="images/hero-tablet.webp" type="image/webp">
+        <source media="(min-width: 641px)" srcset="images/hero-tablet.jpg">
+        <!-- Mobile: Office6 full portrait (workstation close-up) -->
+        <source srcset="images/hero-mobile.webp" type="image/webp">
+        <img src="images/hero-mobile.jpg" alt="CEOFLIGHTS Riga modern office with private workstations">
       </picture>
     </div>
     <div class="hero-overlay"></div>
@@ -87,7 +99,7 @@
         <div class="role-card">
           <div class="role-card-icon"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="14" fill="none" stroke-width="1.5"/><path d="M18 10v8l5.5 3.5" fill="none" stroke-width="1.5"/></svg></div>
           <div class="role-card-label">Shifts</div>
-          <div class="role-card-value">5–1 AM / 6–2 AM / 7–3 AM / 8–4 AM</div>
+          <div class="role-card-value">Evenings, from 5 PM · 8h shifts</div>
         </div>
         <div class="role-card">
           <div class="role-card-icon"><svg viewBox="0 0 36 36"><rect x="7" y="4" width="22" height="28" rx="2" fill="none" stroke-width="1.5"/><path d="M13 12h10M13 18h10M13 24h6" fill="none" stroke-width="1.5"/></svg></div>
@@ -159,8 +171,8 @@
   <!-- Photo Strip -->
   <div class="photo-strip">
     <picture>
-      <source srcset="images/office-workstations.webp" type="image/webp">
-      <img src="images/office-workstations.jpg" alt="CEOFLIGHTS office overview" loading="lazy">
+      <source srcset="images/office-lounge.webp" type="image/webp">
+      <img src="images/office-lounge.jpg" alt="CEOFLIGHTS office lounge area" loading="lazy">
     </picture>
     <div class="photo-strip-overlay"></div>
   </div>
@@ -245,7 +257,7 @@
             </svg>
           </div>
           <h3>Online Assessment</h3>
-          <p>Complete a short skills assessment on TestGorilla. It tests your English, personality traits, and cognitive abilities — no trick questions, just an honest look at your strengths.</p>
+          <p>Complete an online assessment on TestGorilla — a short video intro, real sales scenarios, motivation questions, and a CV upload. It's designed to see how you think, communicate, and handle pressure.</p>
           <div class="hiring-step-detail">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
             <span>~40 minutes · Online</span>
@@ -316,11 +328,11 @@
               </picture>
               <div class="photo-slider-caption"></div>
             </div>
-            <!-- Slide 2: Wide Floor View -->
+            <!-- Slide 2: Office Glass Partition -->
             <div class="photo-slider-slide">
               <picture>
-                <source srcset="images/slide-02-floor-wide.webp" type="image/webp">
-                <img src="images/slide-02-floor-wide.jpg" alt="Wide view of office floor with calling stations and plants" loading="lazy">
+                <source srcset="images/slide-02-office-glass.webp" type="image/webp">
+                <img src="images/slide-02-office-glass.jpg" alt="Glass partitions and workspace layout" loading="lazy">
               </picture>
               <div class="photo-slider-caption"></div>
             </div>
@@ -372,11 +384,11 @@
               </picture>
               <div class="photo-slider-caption"></div>
             </div>
-            <!-- Slide 9: Team Training -->
+            <!-- Slide 9: Floor Call Stations -->
             <div class="photo-slider-slide">
               <picture>
-                <source srcset="images/slide-09-team-training.webp" type="image/webp">
-                <img src="images/slide-09-team-training.jpg" alt="New trainees during their training session" loading="lazy">
+                <source srcset="images/slide-09-floor-stations.webp" type="image/webp">
+                <img src="images/slide-09-floor-stations.jpg" alt="Call stations and modern office floor layout" loading="lazy">
               </picture>
               <div class="photo-slider-caption"></div>
             </div>
