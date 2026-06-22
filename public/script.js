@@ -8,6 +8,20 @@ function onScroll() {
 window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
+// Hide nav on mobile when CTA form is in view
+const ctaSection = document.getElementById('apply');
+if (ctaSection) {
+  const navHideObs = new IntersectionObserver((entries) => {
+    const isMobile = window.matchMedia('(max-width: 640px)').matches;
+    entries.forEach(e => {
+      if (isMobile) {
+        nav.classList.toggle('nav-hidden', e.isIntersecting);
+      }
+    });
+  }, { threshold: 0.15 });
+  navHideObs.observe(ctaSection);
+}
+
 // Staggered scroll-reveal observer
 const revealSelectors = [
   '.role-card', '.benefit-item', '.quality-item',
