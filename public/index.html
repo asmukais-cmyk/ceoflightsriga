@@ -98,79 +98,6 @@
     </div>
   </section>
 
-  <!-- Office Showcase Slider -->
-  <section class="section office-showcase-section" id="office-gallery">
-    <div class="container">
-      <div class="section-label">Our Workspace</div>
-      <h2>Inside the Riga Office</h2>
-      <p class="section-desc">Take a look at where you'll work: custom calling stations, comfortable breakout spaces, and training facilities in central Riga.</p>
-      
-      <div class="photo-slider" id="office-slider">
-        <div class="photo-slider-track">
-          <!-- Slide 1: Office Wide -->
-          <div class="photo-slider-slide">
-            <picture>
-              <source srcset="images/office-wide.webp" type="image/webp">
-              <img src="images/office-wide.jpg" alt="CEOFLIGHTS wide office floor" loading="lazy">
-            </picture>
-            <div class="photo-slider-caption">Main Office Floor</div>
-          </div>
-          <!-- Slide 2: Office Floor -->
-          <div class="photo-slider-slide">
-            <picture>
-              <source srcset="images/office-floor.webp" type="image/webp">
-              <img src="images/office-floor.jpg" alt="CEOFLIGHTS workstations" loading="lazy">
-            </picture>
-            <div class="photo-slider-caption">Custom Calling Stations</div>
-          </div>
-          <!-- Slide 3: Office Lounge -->
-          <div class="photo-slider-slide">
-            <picture>
-              <source srcset="images/office-lounge.webp" type="image/webp">
-              <img src="images/office-lounge.jpg" alt="Office lounge area" loading="lazy">
-            </picture>
-            <div class="photo-slider-caption">Comfortable Breakout Lounge</div>
-          </div>
-          <!-- Slide 4: Office Workstations -->
-          <div class="photo-slider-slide">
-            <picture>
-              <source srcset="images/office-workstations.webp" type="image/webp">
-              <img src="images/office-workstations.jpg" alt="CEOFLIGHTS office overview" loading="lazy">
-            </picture>
-            <div class="photo-slider-caption">Private Workstations</div>
-          </div>
-          <!-- Slide 5: Office Detail -->
-          <div class="photo-slider-slide">
-            <picture>
-              <source srcset="images/office-detail.webp" type="image/webp">
-              <img src="images/office-detail.jpg" alt="Office detail" loading="lazy">
-            </picture>
-            <div class="photo-slider-caption">Lounge Workspace Details</div>
-          </div>
-          <!-- Slide 6: World Clocks -->
-          <div class="photo-slider-slide">
-            <picture>
-              <source srcset="images/world-clocks.webp" type="image/webp">
-              <img src="images/world-clocks.jpg" alt="World timezone clocks" loading="lazy">
-            </picture>
-            <div class="photo-slider-caption">U.S. Timezone Clocks</div>
-          </div>
-        </div>
-
-        <!-- Floating Controls -->
-        <button class="slider-control prev" aria-label="Previous slide" id="slider-prev-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        </button>
-        <button class="slider-control next" aria-label="Next slide" id="slider-next-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </button>
-
-        <!-- Indicators -->
-        <div class="slider-dots"></div>
-      </div>
-    </div>
-  </section>
-
   <!-- Benefits -->
   <section class="section benefits-section" id="benefits">
     <div class="container">
@@ -209,11 +136,21 @@
             </div>
           </div>
         </div>
-        <div class="benefits-image">
-          <picture>
-            <source srcset="images/team-training.webp" type="image/webp">
-            <img src="images/team-training.jpg" alt="The team during a training session" loading="lazy">
-          </picture>
+        <div class="benefits-images-collage">
+          <div class="benefits-collage-img benefits-collage-img-1">
+            <picture>
+              <source srcset="images/team-training.webp" type="image/webp">
+              <img src="images/team-training.jpg" alt="Riga Sales Team" loading="lazy">
+            </picture>
+            <div class="benefits-image-badge">Riga Sales Team</div>
+          </div>
+          <div class="benefits-collage-img benefits-collage-img-2">
+            <picture>
+              <source srcset="images/training-enhanced.webp" type="image/webp">
+              <img src="images/training-enhanced.jpg" alt="Daily Classroom Training" loading="lazy">
+            </picture>
+            <div class="benefits-image-badge">Daily Training</div>
+          </div>
         </div>
       </div>
     </div>
@@ -369,12 +306,68 @@
   <section class="section team-section" id="team">
     <div class="container">
       <div class="team-layout">
-        <div class="team-image">
-          <picture>
-            <source srcset="images/training-enhanced.webp" type="image/webp">
-            <img src="images/training-enhanced.jpg" alt="Daily training session at the CEOFLIGHTS Riga office" loading="lazy">
-          </picture>
-          <div class="team-image-badge">Daily Training</div>
+        <div class="photo-slider" id="office-slider">
+          <div class="photo-slider-track">
+            <!-- Slide 1: Office Wide -->
+            <div class="photo-slider-slide">
+              <picture>
+                <source srcset="images/office-wide.webp" type="image/webp">
+                <img src="images/office-wide.jpg" alt="CEOFLIGHTS wide office floor" loading="lazy">
+              </picture>
+              <div class="photo-slider-caption">Main Office Floor</div>
+            </div>
+            <!-- Slide 2: Office Floor -->
+            <div class="photo-slider-slide">
+              <picture>
+                <source srcset="images/office-floor.webp" type="image/webp">
+                <img src="images/office-floor.jpg" alt="CEOFLIGHTS workstations" loading="lazy">
+              </picture>
+              <div class="photo-slider-caption">Custom Calling Stations</div>
+            </div>
+            <!-- Slide 3: Office Lounge -->
+            <div class="photo-slider-slide">
+              <picture>
+                <source srcset="images/office-lounge.webp" type="image/webp">
+                <img src="images/office-lounge.jpg" alt="Office lounge area" loading="lazy">
+              </picture>
+              <div class="photo-slider-caption">Comfortable Breakout Lounge</div>
+            </div>
+            <!-- Slide 4: Office Workstations -->
+            <div class="photo-slider-slide">
+              <picture>
+                <source srcset="images/office-workstations.webp" type="image/webp">
+                <img src="images/office-workstations.jpg" alt="CEOFLIGHTS office overview" loading="lazy">
+              </picture>
+              <div class="photo-slider-caption">Private Workstations</div>
+            </div>
+            <!-- Slide 5: Office Detail -->
+            <div class="photo-slider-slide">
+              <picture>
+                <source srcset="images/office-detail.webp" type="image/webp">
+                <img src="images/office-detail.jpg" alt="Office detail" loading="lazy">
+              </picture>
+              <div class="photo-slider-caption">Lounge Workspace Details</div>
+            </div>
+            <!-- Slide 6: World Clocks -->
+            <div class="photo-slider-slide">
+              <picture>
+                <source srcset="images/world-clocks.webp" type="image/webp">
+                <img src="images/world-clocks.jpg" alt="World timezone clocks" loading="lazy">
+              </picture>
+              <div class="photo-slider-caption">U.S. Timezone Clocks</div>
+            </div>
+          </div>
+
+          <!-- Floating Controls -->
+          <button class="slider-control prev" aria-label="Previous slide" id="slider-prev-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          </button>
+          <button class="slider-control next" aria-label="Next slide" id="slider-next-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+
+          <!-- Indicators -->
+          <div class="slider-dots"></div>
         </div>
         <div class="team-text">
           <div class="section-label">The Office</div>

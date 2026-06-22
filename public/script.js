@@ -11,7 +11,7 @@ onScroll();
 // Staggered scroll-reveal observer
 const revealSelectors = [
   '.role-card', '.benefit-item', '.quality-item',
-  '.photo-slider', '.cta-card', '.teach-banner',
+  '.cta-card', '.teach-banner',
   '.team-layout', '.benefits-layout'
 ];
 
@@ -25,8 +25,7 @@ const revealObs = new IntersectionObserver((entries) => {
     const sameType = parentChildren.filter(c =>
       c.classList.contains('role-card') ||
       c.classList.contains('benefit-item') ||
-      c.classList.contains('quality-item') ||
-      c.classList.contains('photo-slider')
+      c.classList.contains('quality-item')
     );
     const idx = sameType.indexOf(el);
     const delay = idx >= 0 ? idx * 90 : 0;
