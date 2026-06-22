@@ -86,6 +86,19 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
       const navH = nav.offsetHeight || 70;
       const y = target.getBoundingClientRect().top + window.scrollY - navH - 12;
       window.scrollTo({ top: y, behavior: 'smooth' });
+
+      // If linking to #apply, highlight the CTA card and focus first input
+      if (href === '#apply') {
+        const ctaCard = target.querySelector('.cta-card');
+        const firstInput = target.querySelector('.apply-input');
+        if (ctaCard) {
+          ctaCard.classList.add('form-highlight');
+          setTimeout(() => ctaCard.classList.remove('form-highlight'), 1200);
+        }
+        if (firstInput) {
+          setTimeout(() => firstInput.focus(), 600);
+        }
+      }
     }
   });
 });
