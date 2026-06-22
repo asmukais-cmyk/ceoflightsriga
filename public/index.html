@@ -98,23 +98,78 @@
     </div>
   </section>
 
-  <!-- Photo Gallery -->
-  <div class="photo-gallery">
-    <div class="photo-gallery-inner">
-      <div class="photo-gallery-item">
-        <picture>
-          <source srcset="images/office-floor.webp" type="image/webp">
-          <img src="images/office-floor.jpg" alt="CEOFLIGHTS workstations" loading="lazy">
-        </picture>
-      </div>
-      <div class="photo-gallery-item">
-        <picture>
-          <source srcset="images/office-lounge.webp" type="image/webp">
-          <img src="images/office-lounge.jpg" alt="Office lounge area" loading="lazy">
-        </picture>
+  <!-- Office Showcase Slider -->
+  <section class="section office-showcase-section" id="office-gallery">
+    <div class="container">
+      <div class="section-label">Our Workspace</div>
+      <h2>Inside the Riga Office</h2>
+      <p class="section-desc">Take a look at where you'll work: custom calling stations, comfortable breakout spaces, and training facilities in central Riga.</p>
+      
+      <div class="photo-slider" id="office-slider">
+        <div class="photo-slider-track">
+          <!-- Slide 1: Office Wide -->
+          <div class="photo-slider-slide">
+            <picture>
+              <source srcset="images/office-wide.webp" type="image/webp">
+              <img src="images/office-wide.jpg" alt="CEOFLIGHTS wide office floor" loading="lazy">
+            </picture>
+            <div class="photo-slider-caption">Main Office Floor</div>
+          </div>
+          <!-- Slide 2: Office Floor -->
+          <div class="photo-slider-slide">
+            <picture>
+              <source srcset="images/office-floor.webp" type="image/webp">
+              <img src="images/office-floor.jpg" alt="CEOFLIGHTS workstations" loading="lazy">
+            </picture>
+            <div class="photo-slider-caption">Custom Calling Stations</div>
+          </div>
+          <!-- Slide 3: Office Lounge -->
+          <div class="photo-slider-slide">
+            <picture>
+              <source srcset="images/office-lounge.webp" type="image/webp">
+              <img src="images/office-lounge.jpg" alt="Office lounge area" loading="lazy">
+            </picture>
+            <div class="photo-slider-caption">Comfortable Breakout Lounge</div>
+          </div>
+          <!-- Slide 4: Office Workstations -->
+          <div class="photo-slider-slide">
+            <picture>
+              <source srcset="images/office-workstations.webp" type="image/webp">
+              <img src="images/office-workstations.jpg" alt="CEOFLIGHTS office overview" loading="lazy">
+            </picture>
+            <div class="photo-slider-caption">Private Workstations</div>
+          </div>
+          <!-- Slide 5: Office Detail -->
+          <div class="photo-slider-slide">
+            <picture>
+              <source srcset="images/office-detail.webp" type="image/webp">
+              <img src="images/office-detail.jpg" alt="Office detail" loading="lazy">
+            </picture>
+            <div class="photo-slider-caption">Lounge Workspace Details</div>
+          </div>
+          <!-- Slide 6: World Clocks -->
+          <div class="photo-slider-slide">
+            <picture>
+              <source srcset="images/world-clocks.webp" type="image/webp">
+              <img src="images/world-clocks.jpg" alt="World timezone clocks" loading="lazy">
+            </picture>
+            <div class="photo-slider-caption">U.S. Timezone Clocks</div>
+          </div>
+        </div>
+
+        <!-- Floating Controls -->
+        <button class="slider-control prev" aria-label="Previous slide" id="slider-prev-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        </button>
+        <button class="slider-control next" aria-label="Next slide" id="slider-next-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </button>
+
+        <!-- Indicators -->
+        <div class="slider-dots"></div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- Benefits -->
   <section class="section benefits-section" id="benefits">
@@ -229,6 +284,83 @@
       <div class="teach-banner">
         <span class="teach-banner-icon"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
         If you have these — <strong>we'll teach you the rest.</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- How We Hire -->
+  <section class="section hiring-section" id="hiring">
+    <div class="container">
+      <div class="hiring-header">
+        <div class="section-label">How We Hire</div>
+        <h2>Your Journey to<br><span>Joining the Team</span></h2>
+        <p class="section-desc">Our process is transparent and straightforward. We're looking for the right people — and we want to give you every chance to show us what you've got.</p>
+      </div>
+
+      <div class="hiring-steps">
+        <div class="hiring-step" id="hiring-step-1">
+          <div class="hiring-step-badge">Step 1</div>
+          <div class="hiring-step-icon">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="8" y="6" width="32" height="36" rx="3"/>
+              <path d="M16 16h16M16 23h16M16 30h10"/>
+              <polyline points="34 28 37 31 42 24" stroke-width="2"/>
+            </svg>
+          </div>
+          <h3>Online Assessment</h3>
+          <p>Complete a short skills assessment on TestGorilla. It tests your English, personality traits, and cognitive abilities — no trick questions, just an honest look at your strengths.</p>
+          <div class="hiring-step-detail">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <span>~40 minutes · Online</span>
+          </div>
+        </div>
+
+        <div class="hiring-step-connector">
+          <div class="connector-line"></div>
+          <div class="connector-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+
+        <div class="hiring-step" id="hiring-step-2">
+          <div class="hiring-step-badge">Step 2</div>
+          <div class="hiring-step-icon">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="18" cy="18" r="7"/>
+              <circle cx="32" cy="18" r="7"/>
+              <path d="M10 38c1.5-5 5-8 8-8 2 0 4 1 5.5 3"/>
+              <path d="M24.5 33c1.5-2 3.5-3 5.5-3 3 0 6.5 3 8 8"/>
+            </svg>
+          </div>
+          <h3>Interview</h3>
+          <p>Top-scoring candidates are invited for an interview — either on-site at our Riga office or remotely via video call. We want to get to know you, your motivation, and see how you communicate.</p>
+          <div class="hiring-step-detail">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>On-site or Remote</span>
+          </div>
+        </div>
+
+        <div class="hiring-step-connector">
+          <div class="connector-line"></div>
+          <div class="connector-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+
+        <div class="hiring-step" id="hiring-step-3">
+          <div class="hiring-step-badge hiring-step-badge-final">Final Step</div>
+          <div class="hiring-step-icon">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M24 4l6 12 13 2-9.5 9 2.5 13L24 34l-12 6 2.5-13L5 18l13-2z"/>
+            </svg>
+          </div>
+          <h3>5-Day Training &amp; Final Assessment</h3>
+          <p>Selected candidates enter a 5-day paid training program. You'll learn everything about the role — systems, sales techniques, and client handling. At the end, a final assessment determines your readiness to join the team.</p>
+          <div class="hiring-step-detail">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span>5 days · On-site · Paid</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
