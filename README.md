@@ -16,7 +16,7 @@ public/              → Static landing page (HTML/CSS/JS)
 api/
   └── invite.js      → Vercel serverless function (TestGorilla invite API)
 
-deploy.ps1           → One-command deploy script
+deploy.sh            → One-command deploy script (bash)
 vercel.json          → Vercel configuration
 ```
 
@@ -30,12 +30,12 @@ vercel.json          → Vercel configuration
 ### Deploy to Production
 
 **Option A** — Run the deploy script:
-```powershell
-.\deploy.ps1
+```bash
+./deploy.sh
 ```
 
 **Option B** — Manual steps:
-```powershell
+```bash
 git checkout main
 git merge dev --no-edit
 git push origin main        # triggers Vercel auto-deploy
@@ -54,7 +54,7 @@ git push origin dev
 
 ## Local Development
 
-```powershell
+```bash
 npx serve public
 ```
 
