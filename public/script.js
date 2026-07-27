@@ -277,8 +277,17 @@ if (slider) {
     startAutoPlay();
   }, { passive: true });
   
-  // Initialize slider
-  startAutoPlay();
+  // Start autoplay only when slider enters viewport; pause when it leaves
+  const sliderViewObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        startAutoPlay();
+      } else {
+        stopAutoPlay();
+      }
+    });
+  }, { threshold: 0.15 });
+  sliderViewObs.observe(slider);
 }
 
 // ========================================
