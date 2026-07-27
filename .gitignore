@@ -1,10 +1,28 @@
 .env
+.env.meta-ads
+.venv/
+meta
+meta-ads/
 .DS_Store
 node_modules/
 Office/
 .vercel/
 .vercel
 
+# Merged from CF Riga Video workspace
+creatives/
+hr/
+emails/
+automation/
+onboarding/
+assets/
+
 # Local development/utility scripts (contain API references, not for production)
 *.py
 *.mjs
+*.gs
+*.ps1
+*.json
+!package.json
+!package-lock.json
+!vercel.json

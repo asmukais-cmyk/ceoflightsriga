@@ -1,0 +1,30 @@
+campaign:
+  name: "CEOFLIGHTS Riga - Sales Recruitment June 2026"
+  objective: OUTCOME_LEADS
+  status: PAUSED
+  special_ad_categories: []
+
+ad_set:
+  name: "Riga - 22-45 - Sales Interest"
+  daily_budget: 2000  # In cents. 2000 = €20/day
+  optimization_goal: LINK_CLICKS
+  targeting:
+    age_min: 22
+    age_max: 45
+    genders: [0]  # 0 = all
+    countries: ["LV"]
+    platforms: ["facebook", "instagram"]
+    facebook_positions: ["feed"]
+    instagram_positions: ["stream", "story", "reels"]
+
+ads:
+  - name: "Hook - Elite Career"
+    image: ./carousel_final/slide_01_hook_final.png
+    primary_text: |
+      Ready for a career that matches your ambition?
+      CEOFLIGHTS Riga is hiring elite sales consultants.
+      Earn €3,000-8,000/month + uncapped commission.
+    headline: "Your Next Chapter Starts Here"
+    description: "Join the team redefining luxury travel sales"
+    cta: APPLY_NOW
+    link: "https://ceoflights.com/careers"

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIGA Office — Casper Mikelson Compensation Scheme</title>
+    <style>
+        :root {
+            --primary: #1a365d;
+            --secondary: #2b6cb0;
+            --accent: #ebf8ff;
+            --text-main: #2d3748;
+            --text-muted: #4a5568;
+            --border: #e2e8f0;
+            --green-bg: #f0fff4;
+            --green-border: #c6f6d5;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-main);
+            background-color: #f7fafc;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 40px 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 28px;
+            margin: 0 0 6px 0;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .role-title {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+
+        h2 {
+            color: var(--secondary);
+            font-size: 18px;
+            margin-top: 22px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--accent);
+        }
+
+        ul {
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        .intro {
+            font-size: 14.5px;
+            color: var(--text-muted);
+        }
+
+        .highlight {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .example-box {
+            background-color: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 14.5px;
+        }
+
+        .example-box strong {
+            color: var(--secondary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: var(--accent);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .base-salary-box {
+            background-color: var(--primary);
+            border-radius: 8px;
+            padding: 18px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .base-salary-box .amount {
+            font-size: 30px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .base-salary-box .label {
+            font-size: 14px;
+            color: #cbd5e0;
+            margin-top: 4px;
+        }
+
+        .milestone-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 15px 0;
+        }
+
+        .milestone-card {
+            background-color: var(--green-bg);
+            border: 1px solid var(--green-border);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .milestone-card .threshold {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .milestone-card .bonus {
+            font-size: 28px;
+            font-weight: 700;
+            color: #276749;
+        }
+
+        .milestone-card .desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .calc-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        .calc-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .calc-table tr:last-child td {
+            border-bottom: 2px solid var(--primary);
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .calc-table .calc-label {
+            color: var(--text-muted);
+        }
+
+        .calc-table .calc-value {
+            text-align: right;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            .base-salary-box, .milestone-card, th, .example-box {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            th {
+                background-color: #f1f5f9 !important;
+            }
+            h2 {
+                margin-top: 18px;
+            }
+            @page {
+                margin: 1.5cm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <img src="assets/CEOFLIGHTSRiga Logo/logo-ceoflights-black-png.png" alt="CEOFLIGHTS" style="height: 40px; margin-bottom: 8px;">
+            <div class="subtitle">Casper Mikelson — Managing Director, CEOFLIGHTS Latvia</div>
+        </header>
+
+        <p class="intro">This document outlines the compensation structure for <strong>Casper Mikelson</strong>, Managing Director — CEOFLIGHTS Latvia.</p>
+
+        <!-- 1. Base Salary -->
+        <h2>1. Base Salary</h2>
+        <div class="base-salary-box">
+            <div class="amount">$3,500 USD</div>
+            <div class="label">Fixed Monthly Salary</div>
+        </div>
+
+        <!-- 2. Personal Production -->
+        <h2>2. Personal Production (Ongoing)</h2>
+        <p>In addition to the base salary, personal sales commissions are paid at enhanced fixed rates:</p>
+        <ul>
+            <li><span class="highlight">New Customers:</span> 35% fixed commission.</li>
+            <li><span class="highlight">Own Contacts / Return Customers:</span> 50% fixed commission.</li>
+        </ul>
+
+        <!-- 3. Office Override -->
+        <h2>3. Office Override (Revenue Share)</h2>
+        <p>The override applies only to the <strong>portion of GP that exceeds each threshold</strong> (graduated model):</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>GP Range</th>
+                    <th>Override</th>
+                    <th>Applied To</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>$0 &ndash; $69,999</td>
+                    <td>0%</td>
+                    <td>No override</td>
+                </tr>
+                <tr>
+                    <td>$70,000 &ndash; $99,999</td>
+                    <td><span class="highlight">5%</span></td>
+                    <td>Amount above $70,000</td>
+                </tr>
+                <tr>
+                    <td>$100,000+</td>
+                    <td><span class="highlight">7%</span></td>
+                    <td>Amount above $100,000</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="example-box">
+            <strong>Example:</strong> If the Riga office generates <strong>$120,000 GP</strong> in a month:
+            <table class="calc-table">
+                <tr>
+                    <td class="calc-label">$0 &ndash; $69,999</td>
+                    <td class="calc-value">$0</td>
+                </tr>
+                <tr>
+                    <td class="calc-label">$70,000 &ndash; $99,999 &rarr; 5% &times; $30,000</td>
+                    <td class="calc-value">$1,500</td>
+                </tr>
+                <tr>
+                    <td class="calc-label">$100,000 &ndash; $120,000 &rarr; 7% &times; $20,000</td>
+                    <td class="calc-value">$1,400</td>
+                </tr>
+                <tr>
+                    <td>Total Override</td>
+                    <td class="calc-value">$2,900</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- 4. Milestone Bonuses -->
+        <h2>4. Milestone Bonuses</h2>
+        <p>One-time bonuses are awarded each time the office reaches the following monthly GP milestones:</p>
+        <div class="milestone-grid">
+            <div class="milestone-card">
+                <div class="threshold">$70,000 GP Milestone</div>
+                <div class="bonus">$500</div>
+                <div class="desc">Bonus</div>
+            </div>
+            <div class="milestone-card">
+                <div class="threshold">$100,000 GP Milestone</div>
+                <div class="bonus">$2,500</div>
+                <div class="desc">Bonus</div>
+            </div>
+        </div>
+
+        <!-- 5. Quarterly Performance Bonus -->
+        <h2>5. Quarterly Performance Bonus</h2>
+        <p>Measured as the <strong>3-month average</strong> across the quarter. Each KPI is independent — bonuses are earned per target hit.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>KPI</th>
+                    <th>How Measured</th>
+                    <th>Target</th>
+                    <th>Bonus</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="highlight">Unified Conversion Rate</span></td>
+                    <td>Sold leads &divide; Total leads</td>
+                    <td>&ge; 8%</td>
+                    <td>$1,000</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">Average GP per Sold Lead</span></td>
+                    <td>Total GP &divide; Total sold leads</td>
+                    <td>&ge; $900</td>
+                    <td>$1,000</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">Services Attachment Rate</span></td>
+                    <td>% of sold leads with TPP or FT</td>
+                    <td>&ge; 40%</td>
+                    <td>$1,000</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="text-align: right; font-weight: 700; color: var(--primary);">Max Quarterly Bonus (all 3 hit)</td>
+                    <td style="font-weight: 700; color: var(--primary);">$3,000</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</body>
+</html>

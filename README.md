@@ -71,3 +71,46 @@ Edge cases handled:
 - **Duplicate invite** → Looks up existing assessment link
 - **Bad/disposable email** → Returns user-friendly error
 - **Network timeout** → 15s timeout with clear error message
+
+## Meta Ads Management
+
+### Meta Ads CLI (Primary)
+
+The official **Meta Ads CLI** (`meta-ads` v1.1.0) is installed in `.venv/` with Python 3.12.
+A wrapper script `./meta` auto-loads credentials from `.env.meta-ads`.
+
+```bash
+# List campaigns
+./meta ads campaign list
+
+# Get performance insights (last 7 days)
+./meta ads insights get --date-preset last_7d
+
+# List all ads
+./meta ads ad list
+
+# Get campaign details as JSON
+./meta --output json ads campaign get <CAMPAIGN_ID>
+
+# List ad sets for a campaign
+./meta ads adset list <CAMPAIGN_ID>
+
+# Create a campaign
+./meta ads campaign create --name "My Campaign" --objective OUTCOME_LEADS --daily-budget 5000
+```
+
+Available commands: `campaign`, `adset`, `ad`, `creative`, `insights`, `page`, `catalog`, `dataset`, `guidance`, `study`.
+
+📖 **Full reference:** [META_CLI_REFERENCE.md](META_CLI_REFERENCE.md)
+🤖 **Agent skill:** Type `/meta` in Antigravity chat to trigger the Meta Ads workflow
+
+### Legacy Scripts
+
+Custom Python scripts (in `meta-ads/` and root) are kept for reference.
+These use the Graph API directly via `requests` and predate the CLI.
+
+### Token Expiry
+
+The Meta access token expires approximately every 60 days. Check the comment in `.env.meta-ads` for the current expiry date and regenerate when needed.
+
+
